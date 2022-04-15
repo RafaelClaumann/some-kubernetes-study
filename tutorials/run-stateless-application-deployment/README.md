@@ -200,7 +200,8 @@ template:
 ```
 
 <br>
-
+ 
+####  Testando Update com Diferentes Arquivos
 - Criar um deployment chamado `nginx-deployment` com versão 1.14.2 e label app=nginx
 - Validar os pods e deployment garantindo a versao 1.14.2 e label app=nginx
 - Criar um deployment chamado `nginx-deployment-dois` com versão 1.16.1 e label app=nginx
