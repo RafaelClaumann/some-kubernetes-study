@@ -193,9 +193,10 @@ template:
     (...)
 ```        
 
-`kubectl apply -f deployment2.yaml`
 ``` bash
-    The Deployment "nginx-deployment" is invalid: spec.template.metadata.labels: Invalid value: map[string]string{"app":"nginxx"}: `selector` does not match template `labels`
+## kubectl apply -f deployment2.yaml
+    The Deployment "nginx-deployment" is invalid: spec.template.metadata.labels: 
+    Invalid value: map[string]string{"app":"nginxx"}: `selector` does not match template `labels`
 ```
 
 - Criar um deployment chamado `nginx-deployment` com versão 1.14.2 e label app=nginx
