@@ -2,10 +2,7 @@ https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#creating-a
 
 ## Create a Deployment to rollout a ReplicaSet
 
-Create a Deployment to rollout a ReplicaSet, the ReplicaSet creates Pods in the background. <br>
-Check the status of the `Rollout` to see if it succeeds or not.
-
-`Rollout` significa um update da aplicação esta em execução, pode ser observado assim que executamos um kubectl apply.
+Create a Deployment to rollout a ReplicaSet, the ReplicaSet creates Pods in the background. Check the status of the `Rollout` to see if it succeeds or not.
 
 ``` yaml
 apiVersion: apps/v1
