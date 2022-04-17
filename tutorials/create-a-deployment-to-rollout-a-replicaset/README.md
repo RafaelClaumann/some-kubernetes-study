@@ -1,4 +1,8 @@
-Create a `Deployment` to rollout a `ReplicaSet`, the `ReplicaSet` creates `Pods` in the background.
+https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#creating-a-deployment
+
+## Create a Deployment to rollout a ReplicaSet
+
+Create a Deployment to rollout a ReplicaSet, the ReplicaSet creates Pods in the background. <br>
 Check the status of the `Rollout` to see if it succeeds or not.
 
 `Rollout` significa um update da aplicação esta em execução, pode ser observado assim que executamos um kubectl apply.
@@ -25,11 +29,12 @@ spec:
         image: nginx:1.14.2
         ports:
         - containerPort: 80
-
 ```
+
 ``` bash
 ## kubectl apply -f deployment.yaml       
     deployment.apps/nginx-deployment created
+```
 
 When you inspect the Deployments in your cluster, the following fields are displayed:
 - `NAME` lists the names of the Deployments in the namespace.
@@ -40,6 +45,7 @@ When you inspect the Deployments in your cluster, the following fields are displ
 
 Notice how the number of desired replicas is 3 according to `.spec.replicas` field.
 
+``` bash
 ## kubectl get deployments
     NAME               READY   UP-TO-DATE   AVAILABLE   AGE
     nginx-deployment   2/3     3            3           34s
