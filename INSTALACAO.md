@@ -2,7 +2,7 @@
 
 ### 📖 [Documentação Kind](https://kind.sigs.k8s.io/docs/user/quick-start/)
 ### 📂 [Descomplicando Kubernetes - LINUX Tips](https://github.com/badtuxx/DescomplicandoKubernetes)
-### 🎦 [AULÃO DESCOMPLICANDO O KUBERNETES - LINUX Tips](https://www.youtube.com/watch?v=zz1p3gjyHgc)
+### 🎦 [Aulão Descomplicando O Kubernetes - LINUX Tips](https://www.youtube.com/watch?v=zz1p3gjyHgc)
 
 ## Instalando Kubectl
 ``` bash
