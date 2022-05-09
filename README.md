@@ -8,3 +8,4 @@
 - [5. Observability](https://rafaelclaumann.notion.site/5-Observability-29ff4480c6e142c78a60f8aec4c22850)
 - [6. Pod Design](https://rafaelclaumann.notion.site/6-Pod-Design-2056065a141c42d8867080801c6066c7)
 - [7. Services & Networking](https://rafaelclaumann.notion.site/7-Services-Networking-fa4d24c65aa04496b490dad6345f4a84)
+- [8. State Persistence](https://rafaelclaumann.notion.site/8-State-Persistence-603bee1e382e4dd884fb4c8662043e7b)
