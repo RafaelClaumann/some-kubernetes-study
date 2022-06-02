@@ -1,12 +1,8 @@
 #! /bin/bash
-echo "
-  ####################################
-  # INICIANDO INSTALACAO DO CLUSTER  #
-  ####################################
-";
+echo "## INICIANDO INSTALACAO DO CLUSTER  ##";
 kind create cluster --config - <<EOF
   apiVersion: kind.x-k8s.io/v1alpha4
-  kind: Cluster
+  kind: Cluster 
   nodes:
     - role: control-plane
       image: kindest/node:v1.22.9@sha256:8135260b959dfe320206eb36b3aeda9cffcb262f4b44cda6b33f7bb73f453105
@@ -35,19 +31,7 @@ kind create cluster --config - <<EOF
 EOF
 
 sleep 5;
-echo "
-  #####################################
-  # INICIANDO CONFIGURACAO DO CLUSTER #
-  #####################################
-";
-
-echo;
-echo "
-  ################################
-  # CONFIGURANDO KUBE-SCHEDULER  #
-  #  E KUBE-CONTROLLER-MANAGER   #
-  ################################
-";
+echo "## CONFIGURANDO KUBE-SCHEDULER E KUBE-CONTROLLER-MANAGER ##";
 ##################################################################################
 ####        CONFIGURACAO DO KUBE-SCHEDULER E KUBE-CONTROLLER MANAGER          ####
 ####  https://stackoverflow.com/questions/54608441/kubectl-connectivity-issue ####
@@ -58,20 +42,10 @@ docker exec $CONTROL_PLANE_CONTAINER_ID sed -i "s/- --port=0/#- --port=0/g" /etc
 docker exec $CONTROL_PLANE_CONTAINER_ID systemctl restart kubelet.service
 
 sleep 5;
-echo;
-echo "
-  ##############################
-  #  INSTALANDO E CONFIGURANDO #
-  #        CILIUM CNI          #
-  ##############################
-";
-readonly CILIUM_VERSION=1.11.4
-
-# PRE-LOADING CILIUM DOCKER IMAGES TO KIND NODES
-docker pull quay.io/cilium/cilium:v$CILIUM_VERSION
-kind load docker-image quay.io/cilium/cilium:v$CILIUM_VERSION
-
-# INSTALLING CILIUM $CILIUM_VERSION THROUGH HELM CHART
+echo "## INSTALANDO E CONFIGURANDO CILIUM CNI";
+readonly CILIUM_VERSION=1.11.5
+docker pull quay.io/cilium/cilium:v$CILIUM_VERSION --quiet
+kind load docker-image quay.io/cilium/cilium:v$CILIUM_VERSION --quiet
 helm upgrade \
   --install \
   --version $CILIUM_VERSION \
@@ -94,14 +68,3 @@ helm upgrade \
   ipam:
     mode: kubernetes
 EOF
-
-sleep 5;
-echo;
-echo "
-  #########################################################
-  # CLUSTER CONFIGURADO! AGUARDE ALGUNS MINUTOS E         #
-  #  VERIFIQUE O STATUS DOS PODS NO NAMESPACE KUBE-SYSTEM #
-  #      kubectl get pods --namespace kube-system         #
-  #########################################################
-";
-kubectl get pods --namespace kube-system;
