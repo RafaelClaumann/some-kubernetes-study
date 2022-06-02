@@ -35,6 +35,7 @@ echo "## CONFIGURANDO KUBE-SCHEDULER E KUBE-CONTROLLER-MANAGER ##";
 ##################################################################################
 ####        CONFIGURACAO DO KUBE-SCHEDULER E KUBE-CONTROLLER MANAGER          ####
 ####  https://stackoverflow.com/questions/54608441/kubectl-connectivity-issue ####
+#### https://github.com/kubernetes/kubeadm/issues/2207#issuecomment-666985459 ####
 ##################################################################################
 readonly CONTROL_PLANE_CONTAINER_ID=$(docker container ls -f NAME=kind-control-plane --quiet);
 docker exec $CONTROL_PLANE_CONTAINER_ID sed -i "s/- --port=0/#- --port=0/g" /etc/kubernetes/manifests/kube-scheduler.yaml
