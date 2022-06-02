@@ -1,10 +1,10 @@
 #! /bin/bash
 echo "
-  #################################
-  # STARTING CLUSTER INSTALATION  #
-  #################################
+  ####################################
+  # INICIANDO INSTALACAO DO CLUSTER  #
+  ####################################
 ";
-kind create cluster -v=1 --config - <<EOF
+kind create cluster --config - <<EOF
   apiVersion: kind.x-k8s.io/v1alpha4
   kind: Cluster
   nodes:
@@ -36,37 +36,42 @@ EOF
 
 sleep 5;
 echo "
-  ##################################
-  # STARTING CLUSTER CONFIGURATION #
-  ##################################
+  #####################################
+  # INICIANDO CONFIGURACAO DO CLUSTER #
+  #####################################
+";
+
+echo;
+echo "
+  ################################
+  # CONFIGURANDO KUBE-SCHEDULER  #
+  #  E KUBE-CONTROLLER-MANAGER   #
+  ################################
 ";
 ##################################################################################
 ####        CONFIGURACAO DO KUBE-SCHEDULER E KUBE-CONTROLLER MANAGER          ####
 ####  https://stackoverflow.com/questions/54608441/kubectl-connectivity-issue ####
 ##################################################################################
-echo "CONFIGURANDO KUBE-SCHEDULER E KUBE-CONTROLLER-MANAGER";
-echo "ALTERAÇOES SENDO REALIZADAS NO CONTAINER($CONTROL_PLANE_CONTAINER_ID) CONTROL PLANE";
-
 readonly CONTROL_PLANE_CONTAINER_ID=$(docker container ls -f NAME=kind-control-plane --quiet);
 docker exec $CONTROL_PLANE_CONTAINER_ID sed -i "s/- --port=0/#- --port=0/g" /etc/kubernetes/manifests/kube-scheduler.yaml
 docker exec $CONTROL_PLANE_CONTAINER_ID sed -i "s/- --port=0/#- --port=0/g" /etc/kubernetes/manifests/kube-controller-manager.yaml
 docker exec $CONTROL_PLANE_CONTAINER_ID systemctl restart kubelet.service
 
-echo "COMENTANDO --PORT DE /ETC/KUBERNETES/MANIFESTES/KUBE-SCHEDULER.YAML";
-docker exec $CONTROL_PLANE_CONTAINER_ID cat etc/kubernetes/manifests/kube-scheduler.yaml | grep -B 2 -A 2 -i "\-\-port"
-
-echo "COMENTANDO --PORT DE /ETC/KUBERNETES/MANIFESTS/KUBE-CONTROLLER-MANAGER.YAML";
-docker exec $CONTROL_PLANE_CONTAINER_ID cat etc/kubernetes/manifests/kube-controller-manager.yaml | grep -B 2 -A 2 -i "\-\-port"
-
 sleep 5;
-echo " INSTALANDO E CONFIGURANDO CILIUM CNI $CILIUM_VERSION";
+echo;
+echo "
+  ##############################
+  #  INSTALANDO E CONFIGURANDO #
+  #        CILIUM CNI          #
+  ##############################
+";
 readonly CILIUM_VERSION=1.11.4
 
-echo "PRE-LOADING CILIUM DOCKER IMAGES TO KIND NODES";
+# PRE-LOADING CILIUM DOCKER IMAGES TO KIND NODES
 docker pull quay.io/cilium/cilium:v$CILIUM_VERSION
 kind load docker-image quay.io/cilium/cilium:v$CILIUM_VERSION
 
-echo "INSTALLING CILIUM $CILIUM_VERSION THROUGH HELM CHART";
+# INSTALLING CILIUM $CILIUM_VERSION THROUGH HELM CHART
 helm upgrade \
   --install \
   --version $CILIUM_VERSION \
@@ -91,20 +96,12 @@ helm upgrade \
 EOF
 
 sleep 5;
-echo "
-  #####################################
-  # CLUSTER CONFIGURED WAIT 2 MINUTES #
-  #   TO CILIUM FINISH INSTALATION    #
-  #    OR CHECK PODS AT NAMESPACE     #
-  #           KUBE-SYSTEM             #
-  #####################################
-";
-
 echo;
 echo "
-  ################
-  # CLUSTER INFO #
-  ################
+  #########################################################
+  # CLUSTER CONFIGURADO! AGUARDE ALGUNS MINUTOS E         #
+  #  VERIFIQUE O STATUS DOS PODS NO NAMESPACE KUBE-SYSTEM #
+  #      kubectl get pods --namespace kube-system         #
+  #########################################################
 ";
-kubectl cluster-info;
-# CLUSTER_PORT=$(kubectl cluster-info | grep -E -o "([0-9]{5})" | head -1);
+kubectl get pods --namespace kube-system;
