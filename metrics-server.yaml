@@ -1,7 +1,7 @@
 # Metrics Server =  https://github.com/kubernetes-sigs/metrics-server/releases/tag/v0.6.1
 # Kind           =  kind v0.14.0 go1.18.2 linux/amd64
 # Node           =  kindest/node:v1.22.9@sha256:8135260b959dfe320206eb36b3aeda9cffcb262f4b44cda6b33f7bb73f453105
-# CNI            = Cilium v1.11.5 (https://quay.io/repository/cilium/cilium?tab=tags&tag=latest)
+# CNI            =  Cilium v1.11.5 (https://quay.io/repository/cilium/cilium?tab=tags&tag=latest)
 apiVersion: v1
 kind: ServiceAccount
 metadata:
