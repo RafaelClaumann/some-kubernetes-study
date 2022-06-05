@@ -12,6 +12,7 @@
 
 #### Kubernetes in Action
 - [6. Volumes: attaching disk storage to containers](https://rafaelclaumann.notion.site/Chapter-6-Volumes-attaching-disk-storage-to-containers-610592d78f44443eb68375f92f12558c)
+- [11. Understanding Kubernetes internals](https://rafaelclaumann.notion.site/Chapter-11-Understanding-Kubernetes-internals-ad7e04c23b6b4dd195c933cdc95dc360)
 - [14. Managing pods computational resources](https://rafaelclaumann.notion.site/Chapter-14-Managing-pods-computational-resources-8564fd6e89974c358ced27e890953a50)
 - [16. Advanced scheduling](https://rafaelclaumann.notion.site/Chapter-16-Advanced-scheduling-93b93e44fdcd4d478d0987df54a64765)
 
