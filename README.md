@@ -20,6 +20,6 @@
 - [Core Concepts (13%)](https://rafaelclaumann.notion.site/Core-Concepts-13-021b2b0cde414526be532e5f9945d990)
 
 #### Cluster and Tools
-- [Script to Create KindCluster Script](https://github.com/RafaelClaumann/some-kubernetes-study/blob/main/create_kind_cluster.sh)
+- [Script to Create KindCluster](https://github.com/RafaelClaumann/some-kubernetes-study/blob/main/create_kind_cluster.sh)
 - [Script to Install Prometheus & Grafana](https://github.com/RafaelClaumann/some-kubernetes-study/blob/main/kube_prometheus.sh)
 - [Manifest to Enable Metrics-Server(used to HPA)](https://github.com/RafaelClaumann/some-kubernetes-study/blob/main/metrics_server.yaml)
