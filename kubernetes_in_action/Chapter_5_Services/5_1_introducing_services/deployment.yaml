@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-deploy
+spec:
+  replicas: 3
+  selector:
+    matchExpressions:
+      - key: app
+        operator: In
+        values: ["my-app"]
+  template:
+    metadata:
+      labels:
+        app: my-app
+    spec:
+      initContainers:
+        - image: busybox
+          name: init-html
+          command:
+            - /bin/sh
+            - -c
+          args:
+            - echo "starting configuration";
+              echo "<h1> Hello From $(hostname) </h1>" > html/index.html;
+#          args:
+#            - echo "starting configuration";
+#            - export HOSTNAME=$(HOSTNAME)
+#              echo "<h1> Hello From $HOSTNAME </h1>" > html/index.html;
+          volumeMounts:
+            - name: html-vol
+              mountPath: /html
+      containers:
+        - image: nginx
+          name: deployment-container
+          ports:
+            - name: nginx-http-80
+              containerPort: 80
+              protocol: TCP
+          volumeMounts:
+            - name: html-vol
+              mountPath: /usr/share/nginx/html
+      volumes:
+        - name: html-vol
+          emptyDir: {}
+      restartPolicy: Always

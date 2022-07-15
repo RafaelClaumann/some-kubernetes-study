@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-svc
+spec:
+  sessionAffinity: ClientIP
+  selector:
+    app: my-app
+  type: ClusterIP
+  ports:
+    - name: svc-http
+      port: 8080
+      targetPort: nginx-http-80
+      protocol: TCP
