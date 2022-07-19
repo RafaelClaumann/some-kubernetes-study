@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: external-service
+subsets:
+  - addresses:
+    - ip: 11.11.11.11
+    - ip: 22.22.22.22
+    ports:
+      - name: http-80
+        port: 80
+      - name: postgres-default
+        port: 5432
+# https://kubernetes.io/docs/reference/kubernetes-api/service-resources/endpoints-v1/
+# The expanded set of endpoints is the Cartesian product of Addresses x Ports
+# { Addresses: [ {"ip": "11.11.11.11"}, {"ip": "22.22.22.22} ] }
+# { Ports: [ {"name": "http-80", "port": 80}, {"name": "postgres-default", "port": 5432} ]
+# { Result: [ 11.11.11.11:80, 22.22.22.22:5432 ] }

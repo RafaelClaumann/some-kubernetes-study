@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: external-service        # needs to have the same name as endpoints resources
+spec:
+  type: ExternalName               # allow clients to make resquests to `external-service.default.svc.cluster.local` or simply `external-service`
+  externalName: wwww.someapi.com   # allow clients to make resquests to `external-service.default.svc.cluster.local` or simply `external-service`
+  ports:
+    - name: http-80             # needs to have the same name and port as endpoints resource
+      port: 80
+    - name: postgres-default    # needs to have the same name and port as endpoints resource
+      port: 5432
