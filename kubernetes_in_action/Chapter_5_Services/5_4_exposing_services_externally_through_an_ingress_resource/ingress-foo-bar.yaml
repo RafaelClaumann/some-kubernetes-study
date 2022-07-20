@@ -1,0 +1,87 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: foo-app
+  labels:
+    app: foo-app
+spec:
+  containers:
+    - image: hashicorp/http-echo:0.2.3
+      name: foo-app
+      args: ["-listen=:9090", "-text=\"foo-app\""]
+      ports:
+        - name: foo-port
+          containerPort: 9090
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: foo-service
+spec:
+  selector:
+    app: foo-app
+  type: ClusterIP
+  ports:
+    - name: foo-svc-port
+      port: 3306
+      targetPort: foo-port
+
+---
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: bar-app
+  labels:
+    app: bar-app
+spec:
+  containers:
+    - image: hashicorp/http-echo:0.2.3
+      name: bar-app
+      args: ["-listen=:7070", "-text=\"bar-app\""]
+      ports:
+        - name: bar-port
+          containerPort: 7070
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: bar-service
+spec:
+  selector:
+    app: bar-app
+  type: ClusterIP
+  ports:
+    - name: bar-svc-port
+      port: 5482
+      targetPort: bar-port
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: my-ingress
+spec:
+  rules:
+    - host: 
+      http:
+        paths:
+          - pathType: Prefix
+            path: /foo
+            backend:
+              service:
+                name: foo-service
+                port:
+                  name: foo-svc-port
+          - pathType: Prefix
+            path: /bar
+            backend:
+              service:
+                name: bar-service
+                port:
+                  name: bar-svc-port
