@@ -21,7 +21,7 @@ kubectl run --rm -it dnsutils \
 # FQDN: <svc-name>.<namespace>.svc.cluster.local
 # return Service Pods addresses
 kubectl run --rm -it dnsutils \
---image=tutum/dnsutils \       ```
+--image=tutum/dnsutils \ 
 --restart=Never \
 -- nslookup my-headless-svc
 
