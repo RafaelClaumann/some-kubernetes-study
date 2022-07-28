@@ -12,7 +12,7 @@ kubectl run --rm -it dnsutils \
   Server:         10.96.0.10
   Address:        10.96.0.10#53
 
-  Name:   my-headless-svc.default.svc.cluster.local
+  Name:   my-svc.default.svc.cluster.local
   Address: 10.111.58.133
 ```
 
