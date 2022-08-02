@@ -44,13 +44,13 @@ kubectl run --rm -it dnsutils \
 ``` bash
 # current Pods status, no one is READY
 kubectl get pods,svc -o wide
-	NAME                  READY   STATUS    IP             NODE
-	pod/my-deploy-ggkl9   0/1     Running   10.244.1.52    kind-worker
-	pod/my-deploy-hx5lt   0/1     Running   10.244.2.252   kind-worker2
-	pod/my-deploy-sblj2   0/1     Running   10.244.1.97    kind-worker
+  NAME                  READY   STATUS    IP             NODE
+  pod/my-deploy-ggkl9   0/1     Running   10.244.1.52    kind-worker
+  pod/my-deploy-hx5lt   0/1     Running   10.244.2.252   kind-worker2
+  pod/my-deploy-sblj2   0/1     Running   10.244.1.97    kind-worker
 
-	NAME                      TYPE        CLUSTER-IP  PORT(S)   SELECTOR
-	service/my-headless-svc   ClusterIP   None        8080/TCP  app=my-app
+  NAME                      TYPE        CLUSTER-IP  PORT(S)   SELECTOR
+  service/my-headless-svc   ClusterIP   None        8080/TCP  app=my-app
 
 # FQDN: <svc-name>.<namespace>.svc.cluster.local
 # return Service Pods addresses including not READY Pods
