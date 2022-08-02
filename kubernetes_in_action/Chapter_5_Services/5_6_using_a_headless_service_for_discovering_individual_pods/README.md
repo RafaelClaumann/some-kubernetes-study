@@ -39,3 +39,33 @@ kubectl run --rm -it dnsutils \
   Name:   my-headless-svc.default.svc.cluster.local
   Address: 10.244.2.148
 ```
+
+##### Headless Service (`clusterIP: None`) with `publishNotReadyAddresses`
+``` bash
+# current Pods status, no one is READY
+kubectl get pods,svc -o wide
+	NAME                  READY   STATUS    IP             NODE
+	pod/my-deploy-ggkl9   0/1     Running   10.244.1.52    kind-worker
+	pod/my-deploy-hx5lt   0/1     Running   10.244.2.252   kind-worker2
+	pod/my-deploy-sblj2   0/1     Running   10.244.1.97    kind-worker
+
+	NAME                      TYPE        CLUSTER-IP  PORT(S)   SELECTOR
+	service/my-headless-svc   ClusterIP   None        8080/TCP  app=my-app
+
+# FQDN: <svc-name>.<namespace>.svc.cluster.local
+# return Service Pods addresses including not READY Pods
+kubectl run --rm -it dnsutils \
+--image=tutum/dnsutils \ 
+--restart=Never \
+-- nslookup my-headless-svc
+
+  Server:         10.96.0.10
+  Address:        10.96.0.10#53
+  
+  Name:   my-headless-svc.default.svc.cluster.local
+  Address: 10.244.1.52
+  Name:   my-headless-svc.default.svc.cluster.local
+  Address: 10.244.2.252 
+  Name:   my-headless-svc.default.svc.cluster.local
+  Address: 10.244.1.97
+```
