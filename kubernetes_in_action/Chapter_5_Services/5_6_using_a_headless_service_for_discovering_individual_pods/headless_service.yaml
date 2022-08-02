@@ -4,6 +4,7 @@ metadata:
   name: my-headless-svc
 spec:
   clusterIP: None  # define Service as Headless
+  publishNotReadyAddresses: true  # get unready Pods adresses too
   selector:
     app: my-app
   ports:
