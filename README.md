@@ -19,6 +19,11 @@
 #### dgkanatsios/CKAD-exercises
 - [Core Concepts (13%)](https://rafaelclaumann.notion.site/Core-Concepts-13-021b2b0cde414526be532e5f9945d990)
 
+
+#### Udemy: Kubernetes Certified Application Developer (CKAD) with Tests
+- [StatefulSet, Headless Service & Storage](https://rafaelclaumann.notion.site/StatefulSet-Headless-Service-Storage-755efc798ece4a8bb2d9811f6259f63d)
+- [Practice Tests](https://rafaelclaumann.notion.site/Practice-Tests-c2d241505e0644dd912c68d32639007f)
+
 #### Cluster and Tools
 - [Script to Create Kind Cluster](https://github.com/RafaelClaumann/some-kubernetes-study/blob/main/create_kind_cluster.sh)
 - [Script to Create Kind Cluster with Nginx Ingress Controller](https://github.com/RafaelClaumann/some-kubernetes-study/blob/main/kind_cluster_with_ingress.sh)
