@@ -15,8 +15,8 @@ $kubectl create -f pod.yaml --namespace bar
 
 #### Tentando Listar `Services`
 ``` bash
-# Tentando com o Pod no namespace `foo`
-# O mesmo retorno acontece no namesapace `bar`
+# Tentando listar Services no `foo`.
+# O mesmo resultado acontecerá ao tentar listar os Services no namesapace `bar`.
 $kubectl exec -it my-pod -n foo -c curl  -- \
 curl localhost:8001/api/v1/namespaces/foo/services
 	{
@@ -41,13 +41,13 @@ curl localhost:8001/api/v1/namespaces/foo/services
 
 #### Criando Role
 ``` bash
-# Opcao-01(declarativa) usando manifesto
-# Role para os Pods do namespace `foo`
+# Opcao-01(declarativa) usando manifesto yaml.
+# Criando `Role` para os Pods do namespace `foo`.
 $kubectl apply -f role.yaml --namespace foo
   role.rbac.authorization.k8s.io/service-reader created
 
-# Opcao-02(imperativa) usando comando
-# Role para os Pods do namespace `bar`
+# Opcao-02(imperativa) usando comando.
+# Criando `Role` para os Pods do namespace `bar`.
 $kubectl create role service-reader \
 --verb=get \
 --verb=list \
@@ -57,13 +57,13 @@ $kubectl create role service-reader \
 
 #### Vinculando ServiceAccount e Role com RoleBinding
 ``` bash
-# Opcao-01(declarativa) usando manifesto
-# RoleBinding para a Role e ServiceAccount do namespace `foo`
+# Opcao-01(declarativa) usando manifesto yaml.
+# Realizando vinculo entre `Role` e `ServiceAccount` no namespace `foo` através de uma `RoleBinding`.
 $kubectl apply -f role_binding.yaml -n foo
   rolebinding.rbac.authorization.k8s.io/bind-service-reader created
 
-# Opcao-02(imperativa) usando comando
-# RoleBinding para a Role e ServiceAccount namespace `bar`
+# Opcao-02(imperativa) usando comando.
+# Realizando vinculo entre `Role` e `ServiceAccount` no namespace `bar` através de uma `RoleBinding`.
 $kubectl create rolebinding bind-service-reader \
 --role=service-reader \
 --serviceaccount=bar:default \
@@ -72,7 +72,7 @@ $kubectl create rolebinding bind-service-reader \
 
 #### Resultado Final: Listando Services
 ``` bash
-# Listando Services no namespace `foo`
+# Listando Services no namespace `foo` após o vinculo entre Role e ServiceAccount.
 $kubectl exec -it my-pod -n foo -c curl  -- \
 curl localhost:8001/api/v1/namespaces/foo/services
 	{
@@ -84,7 +84,7 @@ curl localhost:8001/api/v1/namespaces/foo/services
 	  "items": []
 	}
 
-# Listando Services no namespace `bar`
+# Listando Services no namespace `foo` após o vinculo entre Role e ServiceAccount.
 $kubectl exec -it my-pod -n bar -c curl  -- \
 curl localhost:8001/api/v1/namespaces/bar/services
   {
