@@ -1,6 +1,7 @@
 ## Configurando RBAC
 
-O objetivo é criar dois `Namespaces` com um `Pod` em cada namespace e listar os `Services` de ambos os namespaces através de requisições HTTP disparadas a partir dos Pods. <br>
+O objetivo é criar dois `Namespaces` com um `Pod` em cada namespace e listar os `Services` de ambos os namespaces através de requisições HTTP disparadas a partir dos Pods.
+
 Os Pods serão compostos por dois containers:
 - `curl` para realizar as requisições HTTP.
 - `alpine` terá a instalação do `kubectl` e executará o comando `kubectl proxy`. O comando fará o forward das requisições HTTP feitas em http://localhost:8001 para o API Server do cluster.
