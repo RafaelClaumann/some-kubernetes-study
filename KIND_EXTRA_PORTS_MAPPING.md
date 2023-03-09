@@ -1,7 +1,7 @@
 # Uso de Extra Port Mappings no Kind
 
 Durante a leitura da documentação do `kind` encontrei o trecho abaixo que trata das `extra port mappings`:
-```txt
+``` txt
 If you are running Docker without the Docker Desktop Application on Linux,
 you can simply send traffic to the node IPs from the host without extra port mappings.
 
@@ -15,38 +15,34 @@ Um ponto positivo ao uso de `extra port mappings` é a possibilidade de acessar 
 ## Diferença na Criação do Cluster
 
 ### 1 - Cluster com Extra Port Mappings
-```bash
-kind create cluster --config - <<EOF
-  apiVersion: kind.x-k8s.io/v1alpha4
-  kind: Cluster 
-  nodes:
-    - role: control-plane
-      extraPortMappings:
-        - containerPort: 32500            # nodePort exposta pelo Service do tipo NodePort
-          hostPort: 2500                  # porta para acessar o Service em localhost
-          listenAddress: "127.0.0.1"
-          protocol: tcp
-    - role: worker
-    - role: worker
-EOF
+``` yaml
+apiVersion: kind.x-k8s.io/v1alpha4
+kind: Cluster 
+nodes:
+  - role: control-plane
+    extraPortMappings:
+      - containerPort: 32500            # nodePort exposta pelo Service do tipo NodePort
+        hostPort: 2500                  # porta para acessar o Service em localhost
+        listenAddress: "127.0.0.1"
+        protocol: tcp
+  - role: worker
+  - role: worker
 ```
 
 ### 2 - Cluster sem Extra Port Mappings
-```bash
-kind create cluster --config - <<EOF
-  apiVersion: kind.x-k8s.io/v1alpha4
-  kind: Cluster
-  nodes:
-      - role: control-plane
-      - role: worker
-      - role: worker
-EOF
+``` yaml
+apiVersion: kind.x-k8s.io/v1alpha4
+kind: Cluster
+nodes:
+    - role: control-plane
+    - role: worker
+    - role: worker
 ```
 
 ## Validando Acesso com e sem Extra Port Mappings
 
 ### 1 - Criando o cluster
-```bash
+``` bash
 kind create cluster --config - <<EOF
   apiVersion: kind.x-k8s.io/v1alpha4
   kind: Cluster
@@ -63,7 +59,7 @@ EOF
 ```
 
 ### 2 - Manifesto para criação dos `Services` e `Pod`
-```yaml
+``` yaml
 # https://kubernetes.io/docs/reference/kubernetes-api/service-resources/service-v1/#ServiceSpec
 # https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services-service-types
 # SERVICE_SEM_EXTRA_PORT_MAPPINGS
@@ -125,7 +121,7 @@ spec:
 ```
 
 ### 3 - Validando as chamadas para os `Services` usando o endereço IP dos `Nodes` e `localhost`
-```bash
+``` bash
 # obtendo endereço IP dos Nodes
 $kubectl get nodes -o wide 
   NAME                 ROLES           VERSION   INTERNAL-IP   EXTERNAL-IP   OS-IMAGE
