@@ -1,5 +1,10 @@
 # some-kubernetes-study
 
+#### Cluster and Tools
+- [01_INSTALACAO_KIND_KUBECTL](https://github.com/RafaelClaumann/some-kubernetes-study/blob/main/01_INSTALACAO_KIND_KUBECTL.md)
+- [02_COMANDOS_UTEIS.md](https://github.com/RafaelClaumann/some-kubernetes-study/blob/main/02_COMANDOS_UTEIS.md)
+- [03_KIND_EXTRA_PORTS_MAPPING](https://github.com/RafaelClaumann/some-kubernetes-study/blob/main/03_KIND_EXTRA_PORTS_MAPPING.md)
+- [04_KIND_CLUSTER_COMPLETO](https://github.com/RafaelClaumann/some-kubernetes-study/blob/main/04_KIND_CLUSTER_COMPLETO.md)
 
 #### Certified Kubernetes Application Developer (CKAD) Study Guide
 - [2. Core Concepts](https://rafaelclaumann.notion.site/2-Core-Concepts-e67b1c89466c4a0f96fcde9ef6dfc349)
@@ -24,9 +29,3 @@
 #### Udemy: Kubernetes Certified Application Developer (CKAD) with Tests
 - [StatefulSet, Headless Service & Storage](https://rafaelclaumann.notion.site/StatefulSet-Headless-Service-Storage-755efc798ece4a8bb2d9811f6259f63d)
 - [Practice Tests](https://rafaelclaumann.notion.site/Practice-Tests-c2d241505e0644dd912c68d32639007f)
-
-#### Cluster and Tools
-- [Script to Create Kind Cluster](https://github.com/RafaelClaumann/some-kubernetes-study/blob/main/create_kind_cluster.sh)
-- [Script to Create Kind Cluster with Nginx Ingress Controller](https://github.com/RafaelClaumann/some-kubernetes-study/blob/main/kind_cluster_with_ingress.sh)
-- [Script to Install Prometheus & Grafana](https://github.com/RafaelClaumann/some-kubernetes-study/blob/main/kube_prometheus.sh)
-- [Manifest to Enable Metrics-Server(used to HPA)](https://github.com/RafaelClaumann/some-kubernetes-study/blob/main/metrics_server.yaml)
