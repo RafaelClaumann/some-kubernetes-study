@@ -1,5 +1,10 @@
 # Instalando Kind Cluster Completo
 
+### 📌 Pre requisitos
+- kind
+- kubectl
+- helm
+
 ### 📌 O que tem no cluster
 - Três nodes, um control-plane e dois workers
 - Cilium CNI
