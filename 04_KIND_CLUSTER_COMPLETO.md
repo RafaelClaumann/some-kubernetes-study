@@ -1,20 +1,20 @@
 # Instalando Kind Cluster Completo
 
-### O que tem no cluster
+### 📌 O que tem no cluster
 - Três nodes, um control-plane e dois workers
 - Cilium CNI
 - Metrics Server
 - Kube Prometheus Stack
 - Nginx Ingress Controller
 
-### Como criar o cluster
+### 📌 Como criar o cluster
 ``` bash
 curl -LO https://raw.githubusercontent.com/RafaelClaumann/some-kubernetes-study/main/kind_cluster_completo.sh
 
 sh kind_cluster_completo.sh
 ```
 
-### Comentarios e links importantes 
+### 📌 Comentarios e links importantes 
 
 #### Kind
 - Onde encontrar o SHA1 das imagens do Kubernetes pro kind? - [link](https://github.com/kubernetes-sigs/kind/releases/tag/v0.17.0)
