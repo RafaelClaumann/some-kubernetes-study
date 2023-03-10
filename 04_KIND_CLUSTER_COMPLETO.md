@@ -39,19 +39,67 @@ sh kind_cluster_completo.sh
 - Quais são os valores possíveis na configuração do chart? - [link](https://github.com/kubernetes-sigs/metrics-server/blob/master/charts/metrics-server/values.yaml)
 
 #### Kube Prometheus Stack
-- Ausencia de matriz de compatibilidade Kube Prometheus x Kubernetes - [link](https://github.com/prometheus-community/helm-charts/issues/97)
-- Configurações para coletar metricas do Nginx Ingress Controller - [link](https://kubernetes.github.io/ingress-nginx/user-guide/monitoring/#configure-prometheus)
+- Ausencia de matriz da compatibilidade Kube Prometheus Stack x Kubernetes - [link](https://github.com/prometheus-community/helm-charts/issues/97)
+- Configurações para coletar as metricas do Nginx Ingress Controller - [link](https://kubernetes.github.io/ingress-nginx/user-guide/monitoring/#configure-prometheus)
 ``` yaml
+# helm chart values
 prometheus:
   prometheusSpec:
     podMonitorSelectorNilUsesHelmValues: false
     serviceMonitorSelectorNilUsesHelmValues: false
 ```
-- Comando rápido para fazer um Port Forward e acessar o Grafana em `localhost:3000`
+- Comando rápido para fazer um Port Forward e testar o acesso ao Grafana em `localhost:3000`
 ``` bash
-kubectl port-forward svc/prometheus-grafana 3000:80 -n prometheus
+$kubectl port-forward svc/prometheus-grafana 3000:80 -n prometheus
 ```
-- Porque fazer um `kubectl patch` no Service `prometheus-grafana`? Com essa alteração  é possível acessar o Grafana através do endereço IP de qualquer node cluster e porta sem a necessidade do comando `port-forward`.
+- Acessando Grafana através do Service NodePort após execução do comando `kubectl patch`
+``` bash
+$curl 172.18.0.2:30000
+  <a href="/grafana/login">Found</a>.
+
+$curl 172.18.0.3:30000
+  <a href="/grafana/login">Found</a>.
+
+$curl 172.18.0.4:30000
+  <a href="/grafana/login">Found</a>.
+```
+- Configurações para expor o Grafana através do Nginx Ingress Controller - [link](https://fabianlee.org/2022/07/02/prometheus-exposing-prometheus-grafana-as-ingress-for-kube-prometheus-stack/)
+``` yaml
+# helm chart values 
+  grafana:
+    env:
+      GF_SERVER_ROOT_URL: "http://cluster.com/grafana"
+      GF_SERVER_SERVE_FROM_SUB_PATH: "true"
+    ingress:
+      enabled: "true"
+      annotations:
+        nginx.ingress.kubernetes.io/rewrite-target: "/\$2"  # https://kubernetes.github.io/ingress-nginx/examples/rewrite/#rewrite-target
+      hosts: ["cluster.com"]
+      path: "/grafana(/|$)(.*)"      
+```
+``` bash
+$kubectl get nodes -o wide
+  NAME                 ROLES           VERSION   INTERNAL-IP
+  kind-control-plane   control-plane   v1.25.3   172.18.0.3    # adicionar ip do node ao /etc/hosts
+  kind-worker          <none>          v1.25.3   172.18.0.2    # adicionar ip do node ao /etc/hosts
+  kind-worker2         <none>          v1.25.3   172.18.0.4    # adicionar ip do node ao /etc/hosts
+
+$cat /etc/hosts                                                                                               
+  # Host addresses
+  172.18.0.2 my-cluster.com   # ip do node /etc/hosts ! se o ip mudar sera preciso ajustar
+  172.18.0.3 my-cluster.com   # ip do node /etc/hosts ! se o ip mudar sera preciso ajustar
+  172.18.0.4 my-cluster.com   # ip do node /etc/hosts ! se o ip mudar sera preciso ajustar
+
+  127.0.0.1  localhost
+  127.0.1.1  rafael-nitroan51544
+  ::1        localhost ip6-localhost ip6-loopback
+  ff02::1    ip6-allnodes
+  ff02::2    ip6-allrouters
+
+# Acessando através do nginx
+$curl cluster.com/grafana  
+  <a href="/grafana/login">Found</a>.
+```
 
 #### Nginx Ingress Controller
 - Matriz de compatibilidade Nginx Ingress Controller x Kubernetes - [link](https://github.com/kubernetes/ingress-nginx#supported-versions-table)
@@ -61,6 +109,7 @@ kubectl port-forward svc/prometheus-grafana 3000:80 -n prometheus
 - Quais valores customizados utilizar no helm chart para que o Nginx funcione? - [link01](https://github.com/kubernetes-sigs/kind/issues/1693#issuecomment-1166157946) [link02](https://github.com/kubernetes/ingress-nginx/blob/main/hack/manifest-templates/provider/kind/values.yaml)
 - Configuraçao para a coleta de metricas - [link](https://kubernetes.github.io/ingress-nginx/user-guide/monitoring/#re-configure-nginx-ingress-controller)
 ``` yaml
+# helm chart values
 controller:
   metrics:
     enabled: true

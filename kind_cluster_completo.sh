@@ -130,7 +130,16 @@ helm upgrade \
       podMonitorSelectorNilUsesHelmValues: false
       serviceMonitorSelectorNilUsesHelmValues: false
   grafana:
+    env:
+      GF_SERVER_ROOT_URL: "http://cluster.com/grafana"
+      GF_SERVER_SERVE_FROM_SUB_PATH: "true"
     adminPassword: admin
+    ingress:
+      enabled: "true"
+      annotations:
+        nginx.ingress.kubernetes.io/rewrite-target: "/\$2"
+      hosts: ["cluster.com"]
+      path: "/grafana(/|$)(.*)"
 EOF
 
 kubectl patch \
