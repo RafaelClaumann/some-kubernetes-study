@@ -44,12 +44,12 @@ echo "
 ## INSTALANDO E CONFIGURANDO CILIUM CNI ##
 ##########################################";
 readonly CILIUM_CHART_VERSION=1.13.0
-docker pull quay.io/cilium/cilium:v$CILIUM_CHART_VERSION --quiet
-kind load docker-image quay.io/cilium/cilium:v$CILIUM_CHART_VERSION --quiet
+readonly CILIUM_NAMESPACE_NAME=cilium
 helm upgrade \
   --install \
   --version $CILIUM_CHART_VERSION \
-  --namespace kube-system \
+  --namespace $CILIUM_NAMESPACE_NAME \
+  --create-namespace \
   --repo https://helm.cilium.io cilium cilium \
   --values - <<EOF
   kubeProxyReplacement: strict
@@ -77,7 +77,7 @@ EOF
 
 echo "#### WAITING CILIUM INSTALATION ####";
 kubectl wait \
-  --namespace=kube-system \
+  --namespace=$CILIUM_NAMESPACE_NAME \
   --for=condition=ready pod \
   --selector='app.kubernetes.io/name in(cilium-agent, cilium-operator)' \
   --timeout=-1s  # -1 = wait 1 week
