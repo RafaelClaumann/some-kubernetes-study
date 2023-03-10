@@ -31,11 +31,11 @@ $kubectl get nodes -o wide
 - Estado dos helm charts instalados
 ``` bash
 $helm list --all-namespaces  
-  NAME            NAMESPACE       REVISION  UPDATED                       STATUS      CHART                          APP VERSION
-  cilium          kube-system     1         2023-03-10 18:56:58.022716715 deployed    cilium-1.13.0                  1.13.0     
-  ingress-nginx   ingress-nginx   1         2023-03-10 19:01:14.413567725 deployed    ingress-nginx-4.5.2            1.6.4      
-  metrics-server  metrics-server  1         2023-03-10 18:57:32.775742525 deployed    metrics-server-3.8.4           0.6.2      
-  prometheus      prometheus      1         2023-03-10 18:58:47.813866936 deployed    kube-prometheus-stack-45.7.1   v0.63.0
+  NAME            NAMESPACE       REVISION  UPDATED           STATUS      CHART                          APP VERSION
+  cilium          kube-system     1         2023-03-10 18:56  deployed    cilium-1.13.0                  1.13.0     
+  ingress-nginx   ingress-nginx   1         2023-03-10 19:01  deployed    ingress-nginx-4.5.2            1.6.4      
+  metrics-server  metrics-server  1         2023-03-10 18:57  deployed    metrics-server-3.8.4           0.6.2      
+  prometheus      prometheus      1         2023-03-10 18:58  deployed    kube-prometheus-stack-45.7.1   v0.63.0
 ```
 - Estado do Grafana e Nginx
 ``` bash
