@@ -14,8 +14,6 @@ curl -LO https://raw.githubusercontent.com/RafaelClaumann/some-kubernetes-study/
 sh kind_cluster_completo.sh
 ```
 
----
-
 ### Comentarios e links importantes 
 
 #### Kind
