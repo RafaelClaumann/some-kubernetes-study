@@ -1,6 +1,6 @@
 # Comandos importantes
 
-## Kind
+### Kind
 ``` bash
 # criar um cluster com um nome especifico
 kind create cluster --name <cluster_name>
@@ -21,7 +21,7 @@ kind delete clusters $(kind get clusters)
 kind delete clusters --all
 ```
 
-## Kubectl ([documentação](https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands))
+### Kubectl ([documentação](https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands))
 ``` bash
 ## listar pods do namespace default
 ## -o wide  -> traz mais informações como o endereço IP do Pod e node que ele foi escalonado
@@ -116,4 +116,71 @@ kind delete clusters --all
 
 ## exibir o contexto atual
   kubectl config current-context  
+```
+
+### Helm ([documentação](https://helm.sh/docs/helm/))
+``` bash
+# Adicionando repositório
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+
+# Removento repositório
+helm repo remove prometheus-community
+
+# Listando repositórios
+helm repo list
+
+# Listando charts disponíveis no repositório prometheus-community
+helm search repo prometheus-community
+
+# Instalando chart COM repositório adicionado
+# helm install RELEASE_NAME REPOSITORY/CHART_NAME
+helm install kube-prometheus prometheus-community/kube-prometheus-stack \
+  --version 45.7.1 \
+  --namespace prometheus \
+  --create-namespace \
+  --set grafana.adminPassword=rafael
+
+# Instalando chart SEM repositório adicionado
+# Demonstrando a possibilidade de usar yaml ao invés de --set
+helm upgrade \
+  --install \
+  --version 45.7.1 \
+  --namespace prometheus \
+  --create-namespace \
+  --repo https://prometheus-community.github.io/helm-charts kube-prometheus kube-prometheus-stack \
+  --values - <<EOF
+  grafana:
+    adminPassword: admin
+EOF
+
+# Alterando parâmetro do chart COM repositório adicionado
+helm upgrade kube-prometheus prometheus-community/kube-prometheus-stack \
+  --namespace prometheus  \
+  --set grafana.adminPassword=rafael
+
+# Alterando parâmetro do chart SEM repositório adicionado
+# Demonstrando a possibilidade de usar yaml ao invés de --set
+helm upgrade \
+  --repo https://prometheus-community.github.io/helm-charts kube-prometheus kube-prometheus-stack \
+  --namespace prometheus  \
+  --values - <<EOF
+  grafana:
+    adminPassword: teste
+EOF
+
+# Listando atributos alterados na flag --values durante a instalação do chart
+# Use a flag -a no comando abaixo para listar todos os atributos disponiveis no chart
+# Os atributos disponíveis também podem ser encontrados no repositório do chart:
+#   https://github.com/prometheus-community/helm-charts/blob/main/charts/kube-prometheus-stack/values.yaml
+helm get values kube-prometheus --namespace prometheus
+
+# Listando Charts(releases) instalados por namespace
+# Use a flag -A ou --all-namespaces para listar os charts de todos os namespaces
+helm list --namespace prometheus
+  NAME             NAMESPACE     REVISION   UPDATED              STATUS     CHART                         APP VERSION
+  kube-prometheus  prometheus    3          2023-03-10 06:44:29  deployed   kube-prometheus-stack-45.7.1  v0.63.0    
+
+# Realizar rollback para revisoes anteriores do chart
+helm rollback kube-prometheus 2 --namespace prometheus
+
 ```
