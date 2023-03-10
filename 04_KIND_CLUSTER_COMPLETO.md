@@ -86,9 +86,9 @@ $kubectl get nodes -o wide
 
 $cat /etc/hosts                                                                                               
   # Host addresses
-  172.18.0.2 my-cluster.com   # ip do node /etc/hosts ! se o ip mudar sera preciso ajustar
-  172.18.0.3 my-cluster.com   # ip do node /etc/hosts ! se o ip mudar sera preciso ajustar
-  172.18.0.4 my-cluster.com   # ip do node /etc/hosts ! se o ip mudar sera preciso ajustar
+  172.18.0.2 cluster.com   # ip do node /etc/hosts ! se o ip mudar sera preciso ajustar
+  172.18.0.3 cluster.com   # ip do node /etc/hosts ! se o ip mudar sera preciso ajustar
+  172.18.0.4 cluster.com   # ip do node /etc/hosts ! se o ip mudar sera preciso ajustar
 
   127.0.0.1  localhost
   127.0.1.1  rafael-nitroan51544
