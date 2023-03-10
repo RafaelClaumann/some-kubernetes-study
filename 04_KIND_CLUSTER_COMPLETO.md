@@ -44,8 +44,7 @@ $curl 172.18.0.2:30000
   <a href="/grafana/login">Found</a>.
 
 # Acessando Grafana através do Nginx
-# obs: precisa configurar o /etc/hosts, veja o link abaixo:
-# https://github.com/RafaelClaumann/some-kubernetes-study/blob/main/04_KIND_CLUSTER_COMPLETO.md#kube-prometheus-stack
+# obs: precisa configurar o /etc/hosts, veja a sessão `kube-prometheus-stack` neste documento
 $curl cluster.com/grafana
   <a href="/grafana/login">Found</a>.
 
