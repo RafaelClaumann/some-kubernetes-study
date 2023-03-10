@@ -19,6 +19,47 @@ curl -LO https://raw.githubusercontent.com/RafaelClaumann/some-kubernetes-study/
 sh kind_cluster_completo.sh
 ```
 
+### 📌 Resultado esperado
+- Estado dos nodes
+``` bash
+$kubectl get nodes -o wide     
+  NAME                STATUS  ROLES          VERSION  INTERNAL-IP  EXTERNAL-IP  OS-IMAGE            CONTAINER-RUNTIME
+  kind-control-plane  Ready   control-plane  v1.25.3  172.18.0.4   <none>       Ubuntu 22.04.1 LTS  containerd://1.6.9
+  kind-worker         Ready   <none>         v1.25.3  172.18.0.2   <none>       Ubuntu 22.04.1 LTS  containerd://1.6.9
+  kind-worker2        Ready   <none>         v1.25.3  172.18.0.3   <none>       Ubuntu 22.04.1 LTS  containerd://1.6.9
+```
+- Estado dos helm charts instalados
+``` bash
+$helm list --all-namespaces  
+  NAME            NAMESPACE       REVISION  UPDATED                       STATUS      CHART                          APP VERSION
+  cilium          kube-system     1         2023-03-10 18:56:58.022716715 deployed    cilium-1.13.0                  1.13.0     
+  ingress-nginx   ingress-nginx   1         2023-03-10 19:01:14.413567725 deployed    ingress-nginx-4.5.2            1.6.4      
+  metrics-server  metrics-server  1         2023-03-10 18:57:32.775742525 deployed    metrics-server-3.8.4           0.6.2      
+  prometheus      prometheus      1         2023-03-10 18:58:47.813866936 deployed    kube-prometheus-stack-45.7.1   v0.63.0
+```
+- Estado do Grafana e Nginx
+``` bash
+# Acessando Grafana através do Service NodePort
+$curl 172.18.0.2:30000
+  <a href="/grafana/login">Found</a>.
+
+# Acessando Grafana através do Nginx
+$curl cluster.com/grafana
+  <a href="/grafana/login">Found</a>.
+
+# Teste do nginx utilizando o arquivo `validate_nginx_setup.yaml`
+$kubectl apply -f https://raw.githubusercontent.com/RafaelClaumann/some-kubernetes-study/main/validate_nginx_setup.yaml
+
+$curl localhost/foo/hostname
+  foo-app%
+
+$curl localhost/bar/hostname
+  bar-app%
+
+$kubectl delete -f https://raw.githubusercontent.com/RafaelClaumann/some-kubernetes-study/main/validate_nginx_setup.yaml --force --grace-period=0
+```
+
+
 ### 📌 Comentarios e links importantes 
 
 #### Kind
