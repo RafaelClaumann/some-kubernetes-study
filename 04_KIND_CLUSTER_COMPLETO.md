@@ -114,7 +114,8 @@ $curl 172.18.0.4:30000
     ingress:
       enabled: "true"
       annotations:
-        nginx.ingress.kubernetes.io/rewrite-target: "/\$2"  # https://kubernetes.github.io/ingress-nginx/examples/rewrite/#rewrite-target
+        # https://kubernetes.github.io/ingress-nginx/examples/rewrite/#rewrite-target
+        nginx.ingress.kubernetes.io/rewrite-target: "/\$2"
       hosts: ["cluster.com"]
       path: "/grafana(/|$)(.*)"      
 ```
