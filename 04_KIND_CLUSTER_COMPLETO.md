@@ -1,25 +1,25 @@
 # Instalando Kind Cluster Completo
 
-### 📌 Pre requisitos
+## Pre requisitos
 - kind
 - kubectl
 - helm
 
-### 📌 O que tem no cluster
+## O que tem no cluster
 - Três nodes, um control-plane e dois workers
 - Cilium CNI
 - Metrics Server
 - Kube Prometheus Stack
 - Nginx Ingress Controller
 
-### 📌 Como criar o cluster
+## Como criar o cluster
 ``` bash
 curl -LO https://raw.githubusercontent.com/RafaelClaumann/some-kubernetes-study/main/kind_cluster_completo.sh
 
 sh kind_cluster_completo.sh
 ```
 
-### 📌 Resultado esperado
+## Resultado esperado
 - Estado dos nodes
 ``` bash
 $kubectl get nodes -o wide     
@@ -60,7 +60,9 @@ $curl localhost/bar/hostname
 $kubectl delete -f https://raw.githubusercontent.com/RafaelClaumann/some-kubernetes-study/main/validate_nginx_setup.yaml --force --grace-period=0
 ```
 
-### 📌 Comentarios e links importantes 
+---
+
+# Comentarios e links importantes 
 
 #### Kind
 - Onde encontrar o SHA1 das imagens do Kubernetes pro kind? - [link](https://github.com/kubernetes-sigs/kind/releases/tag/v0.17.0)
@@ -104,7 +106,7 @@ $curl 172.18.0.3:30000
 $curl 172.18.0.4:30000
   <a href="/grafana/login">Found</a>.
 ```
-- Configurações para expor o Grafana através do Nginx Ingress Controller - [link](https://fabianlee.org/2022/07/02/prometheus-exposing-prometheus-grafana-as-ingress-for-kube-prometheus-stack/)
+- Configurações para expor o Grafana através do Nginx - [link](https://fabianlee.org/2022/07/02/prometheus-exposing-prometheus-grafana-as-ingress-for-kube-prometheus-stack/)
 ``` yaml
 # helm chart values 
   grafana:
