@@ -16,6 +16,7 @@
 - [8. State Persistence](https://rafaelclaumann.notion.site/8-State-Persistence-603bee1e382e4dd884fb4c8662043e7b)
 
 #### Kubernetes in Action
+- [5. Services: enabling clients to discover and talk to pods](https://www.notion.so/rafaelclaumann/Chapter-5-Services-enabling-clients-to-discover-and-talk-to-pods-68a9fb7cfd9143b6bd93afc8dc0adeda?pvs=4)
 - [6. Volumes: attaching disk storage to containers](https://rafaelclaumann.notion.site/Chapter-6-Volumes-attaching-disk-storage-to-containers-610592d78f44443eb68375f92f12558c)
 - [11. Understanding Kubernetes internals](https://rafaelclaumann.notion.site/Chapter-11-Understanding-Kubernetes-internals-ad7e04c23b6b4dd195c933cdc95dc360)
 - [12. Securing the Kubernetes API server](https://rafaelclaumann.notion.site/Chapter-12-Securing-the-Kubernetes-API-server-bdccf04ec3d34af9bb6a909da136f83d)
