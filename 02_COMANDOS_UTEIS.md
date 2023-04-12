@@ -183,4 +183,7 @@ helm list --namespace prometheus
 # Realizar rollback para revisoes anteriores do chart
 helm rollback kube-prometheus 2 --namespace prometheus
 
+# Listar revisions do chart
+helm history --namespace prometheus kube-prometheus
+
 ```
