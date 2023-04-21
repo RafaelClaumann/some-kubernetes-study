@@ -1,15 +1,12 @@
 #! /bin/bash
 
 # options:
-#   no-options                  -> install cluster with cilium cni
 #   -b / --basic                -> install clean cluster
-#   -m / --metrics              -> install metrics server(+ cilium)
-#   -i / --ingress              -> install nginx ingress controller(+ cilium)
-#   -p / --prometheus           -> install kube prometheus stack(+ cilium)
-#   -pi / --prometheus-ingress  -> install ingress-nginx and kube prometheus stack(+ cilium)
-
-readonly GREEN='\033[0;32m'
-readonly NOCOLOR='\033[0m'
+#   -c / --cni                  -> install cilium cni
+#   -m / --metrics              -> install metrics server
+#   -i / --ingress              -> install nginx ingress controller
+#   -p / --prometheus           -> install kube prometheus stack
+#   -pi / --prometheus-ingress  -> install ingress-nginx, kube prometheus stack and service monitor on nginx
 
 readonly CILIUM_HELM_CHART_VERSION=1.13.0
 readonly CILIUM_HELM_REPOSITORY_URL=https://helm.cilium.io 
@@ -33,11 +30,12 @@ readonly INGRESS_NGINX_NAMESPACE_NAME=ingress
 
 main() {
 
-  if [ "$1" == "-b" ] || [ "$1" == "--basic" ]; then
-    basic_cluster
-    exit 0
-  else
+  if [ "$1" == "-c" ] || [ "$1" == "--cni" ]; then
+    echo_green_pattern "Criando cluster com Cilium CNI"
     cluster_with_cni
+  else
+    echo_green_pattern "Criando cluster sem Cilium CNI"
+    basic_cluster
   fi
 
   metrics_server=false
@@ -74,24 +72,33 @@ main() {
         prometheus=true
       fi
       
+      echo_green_pattern "Patch prometheus stack"
       helm upgrade \
         --repo "$PROMETHEUS_STACK_HELM_REPOSITORY_URL" "$PROMETHEUS_STACK_HELM_RELEASE_NAME" kube-prometheus-stack \
         --namespace "$PROMETHEUS_STACK_NAMESPACE_NAME" \
+        --reuse-values \
         --set grafana.ingress.enabled=true \
-        --set grafana.annotations.nginx.kubernetes.io/rewrite-target="/\$2" \
+        --set grafana.annotations."nginx\.kubernetes\.io\/rewrite-target="/\$2 \
         --set grafana.hosts=cluster.com \
         --set grafana.path="/grafana(/|$)(.*)"
 
+      helm get values $PROMETHEUS_STACK_HELM_RELEASE_NAME --namespace $PROMETHEUS_STACK_NAMESPACE_NAME
+
+      echo_green_pattern "Patch ingress ngnix"
       helm upgrade \
         --repo "$INGRESS_NGINX_HELM_REPOSITORY_URL" "$INGRESS_NGINX_HELM_RELEASE_NAME" ingress-nginx \
         --namespace "$INGRESS_NGINX_NAMESPACE_NAME" \
+        --reuse-values \
         --set controller.metrics.enabled=true \
         --set controller.metrics.serviceMonitor.enabled=true \
-        --set controller.metrics.serviceMonitor.additionalLabels.release=prometheus
+        --set controller.metrics.serviceMonitor.additionalLabels."release="prometheus
+      
+      helm get values $INGRESS_NGINX_HELM_RELEASE_NAME --namespace $INGRESS_NGINX_NAMESPACE_NAME
     fi
 
       shift
   done
+  exit 0
 }
 
 function basic_cluster() {
@@ -101,6 +108,13 @@ function basic_cluster() {
     nodes:
       - role: control-plane
         image: kindest/node:v1.25.3@sha256:f52781bc0d7a19fb6c405c2af83abfeb311f130707a0e219175677e366cc45d1
+        extraPortMappings:
+          - containerPort: 80
+            hostPort: 80
+            protocol: TCP
+          - containerPort: 443
+            hostPort: 443
+            protocol: TCP          
       - role: worker
         image: kindest/node:v1.25.3@sha256:f52781bc0d7a19fb6c405c2af83abfeb311f130707a0e219175677e366cc45d1
       - role: worker
@@ -115,16 +129,7 @@ function cluster_with_cni() {
     nodes:
       - role: control-plane
         image: kindest/node:v1.25.3@sha256:f52781bc0d7a19fb6c405c2af83abfeb311f130707a0e219175677e366cc45d1
-        kubeadmConfigPatches:
-          - |
-            kind: InitConfiguration
-            nodeRegistration:
-              kubeletExtraArgs:
-                node-labels: "ingress-ready=true"
         extraPortMappings:
-          - containerPort: 30500
-            hostPort: 3500
-            protocol: tcp
           - containerPort: 80
             hostPort: 80
             protocol: TCP
@@ -142,7 +147,7 @@ function cluster_with_cni() {
       serviceSubnet: "10.96.0.0/12"     # Configuracao para o Cilium
 EOF
 
-  echo -e "${GREEN}  #### INSTALANDO E CONFIGURANDO CILIUM CNI #### ${NOCOLOR}";
+  echo_green_pattern "Instalando e configurando Cilium CNI"
   helm upgrade \
     --install \
     --version $CILIUM_HELM_CHART_VERSION \
@@ -162,7 +167,7 @@ EOF
     --set hubble.relay.enabled=false \
     --set hubble.ui.enabled=false
 
-  echo -e "${GREEN} #### WAITING CILIUM INSTALATION #### ${NOCOLOR}";
+  echo_green_pattern "Esperando a instalação do Cilium CNI"
   kubectl wait \
     --namespace=$CILIUM_NAMESPACE_NAME \
     --for=condition=ready pod \
@@ -174,7 +179,8 @@ EOF
 }
 
 function install_metrics_server() {
-  echo -e "${GREEN} #### INSTALANDO E CONFIGURANDO METRICS SERVER #### ${NOCOLOR}";
+  echo_green_pattern "Instalando e configurando metrics server"
+
   helm upgrade \
     --install \
     --version $METRICS_SERVER_HELM_CHART_VERSION \
@@ -195,7 +201,7 @@ EOF
 }
 
 function install_prometheus_stack() {
-  echo -e "${GREEN} #### INSTALANDO E CONFIGURANDO KUBE_PROMETHEUS_STACK ### ${NOCOLOR}";
+  echo_green_pattern "Instalando e configurando kube prometheus stack"
   
   helm upgrade \
     --install \
@@ -225,10 +231,11 @@ EOF
 }
 
 function install_ingress_nginx() {
-  echo -e "${GREEN} #### INSTALANDO E CONFIGURANDO NGINX INGRESS CONTROLLER #### ${NOCOLOR}";
-  kubectl label node kind-control-plane ingress-ready=true
-  kubectl label node kind-worker ingress-ready=true
-  kubectl label node kind-worker2 ingress-ready=true
+  echo_green_pattern "Instalando e configurando nginx ingress controller"
+
+  kubectl label node --overwrite kind-control-plane ingress-ready=true
+  kubectl label node --overwrite kind-worker ingress-ready=true
+  kubectl label node --overwrite kind-worker2 ingress-ready=true
 
   helm upgrade \
     --install \
@@ -267,6 +274,12 @@ EOF
 
   echo
   kubectl get pods --namespace $INGRESS_NGINX_NAMESPACE_NAME
+}
+
+function echo_green_pattern() {
+  GREEN='\033[0;32m'
+  NOCOLOR='\033[0m'
+  echo -e "${GREEN}$1${NOCOLOR}"
 }
 
 main "$@"; exit
