@@ -6,17 +6,25 @@
 - helm
 
 ## O que tem no cluster
-- Três nodes, um control-plane e dois workers
-- Cilium CNI
-- Metrics Server
-- Kube Prometheus Stack
-- Nginx Ingress Controller
+- Três nodes(_um control-plane e dois workers_)
+- Cilium CNI (_opcional_)
+- Metrics Server (_opcional_)
+- Kube Prometheus Stack (_opcional_)
+- Nginx Ingress Controller (_opcional_)
 
 ## Como criar o cluster
 ``` bash
-curl -LO https://raw.githubusercontent.com/RafaelClaumann/some-kubernetes-study/main/kind_cluster_completo.sh
+# options:
+#   no-options                  -> install cluster with cilium cni
+#   -b / --basic                -> install clean cluster
+#   -m / --metrics              -> install metrics server(+ cilium)
+#   -i / --ingress              -> install nginx ingress controller(+ cilium)
+#   -p / --prometheus           -> install kube prometheus stack(+ cilium)
+#   -pi / --prometheus-ingress  -> install ingress-nginx and kube prometheus stack(+ cilium)
 
-sh kind_cluster_completo.sh
+curl -LO https://raw.githubusercontent.com/RafaelClaumann/some-kubernetes-study/main/kind_cluster.sh
+
+sh kind_cluster.sh [options]
 ```
 
 ## Resultado esperado
@@ -33,31 +41,29 @@ $kubectl get nodes -o wide
 $helm list --all-namespaces  
   NAME            NAMESPACE       REVISION  UPDATED           STATUS      CHART                          APP VERSION
   cilium          cilium          1         2023-03-10 18:56  deployed    cilium-1.13.0                  1.13.0     
-  ingress-nginx   ingress-nginx   1         2023-03-10 19:01  deployed    ingress-nginx-4.5.2            1.6.4      
-  metrics-server  metrics-server  1         2023-03-10 18:57  deployed    metrics-server-3.8.4           0.6.2      
+  nginx           ingress         1         2023-03-10 19:01  deployed    ingress-nginx-4.5.2            1.6.4      
+  metrics         metrics-server  1         2023-03-10 18:57  deployed    metrics-server-3.8.4           0.6.2      
   prometheus      prometheus      1         2023-03-10 18:58  deployed    kube-prometheus-stack-45.7.1   v0.63.0
 ```
 - Estado do Grafana e Nginx
 ``` bash
-# Acessando Grafana através do Service NodePort
-$curl 172.18.0.2:30000
-  <a href="/grafana/login">Found</a>.
+###
+### Acessando Grafana através do Service NodePort
+###
+  $curl 172.18.0.2:30000
+    <a href="/grafana/login">Found</a>.
+###
+### Teste do nginx utilizando o arquivo `validate_nginx_setup.yaml`
+###
+  $kubectl apply -f https://raw.githubusercontent.com/RafaelClaumann/some-kubernetes-study/main/validate_nginx_setup.yaml
 
-# Acessando Grafana através do Nginx
-# obs: é preciso configurar o /etc/hosts, veja a sessão `Kube Prometheus Stack` neste documento
-$curl cluster.com/grafana
-  <a href="/grafana/login">Found</a>.
+  $curl localhost/foo/hostname
+    foo-app%
 
-# Teste do nginx utilizando o arquivo `validate_nginx_setup.yaml`
-$kubectl apply -f https://raw.githubusercontent.com/RafaelClaumann/some-kubernetes-study/main/validate_nginx_setup.yaml
+  $curl localhost/bar/hostname
+    bar-app%
 
-$curl localhost/foo/hostname
-  foo-app%
-
-$curl localhost/bar/hostname
-  bar-app%
-
-$kubectl delete -f https://raw.githubusercontent.com/RafaelClaumann/some-kubernetes-study/main/validate_nginx_setup.yaml --force --grace-period=0
+  $kubectl delete -f https://raw.githubusercontent.com/RafaelClaumann/some-kubernetes-study/main/validate_nginx_setup.yaml --force --grace-period=0
 ```
 
 ---
@@ -104,44 +110,6 @@ $curl 172.18.0.3:30000
   <a href="/grafana/login">Found</a>.
 
 $curl 172.18.0.4:30000
-  <a href="/grafana/login">Found</a>.
-```
-- Configurações para expor o Grafana através do Nginx - [link](https://fabianlee.org/2022/07/02/prometheus-exposing-prometheus-grafana-as-ingress-for-kube-prometheus-stack/)
-``` yaml
-# helm chart values 
-  grafana:
-    env:
-      GF_SERVER_ROOT_URL: "http://cluster.com/grafana"
-      GF_SERVER_SERVE_FROM_SUB_PATH: "true"
-    ingress:
-      enabled: "true"
-      annotations:
-        # https://kubernetes.github.io/ingress-nginx/examples/rewrite/#rewrite-target
-        nginx.ingress.kubernetes.io/rewrite-target: "/\$2"
-      hosts: ["cluster.com"]
-      path: "/grafana(/|$)(.*)"      
-```
-``` bash
-$kubectl get nodes -o wide
-  NAME                 ROLES           VERSION   INTERNAL-IP
-  kind-control-plane   control-plane   v1.25.3   172.18.0.3    # adicionar ip do node ao /etc/hosts
-  kind-worker          <none>          v1.25.3   172.18.0.2    # adicionar ip do node ao /etc/hosts
-  kind-worker2         <none>          v1.25.3   172.18.0.4    # adicionar ip do node ao /etc/hosts
-
-$cat /etc/hosts                                                                                               
-  # Host addresses
-  172.18.0.2 cluster.com   # ip do node /etc/hosts ! se o ip mudar sera preciso ajustar
-  172.18.0.3 cluster.com   # ip do node /etc/hosts ! se o ip mudar sera preciso ajustar
-  172.18.0.4 cluster.com   # ip do node /etc/hosts ! se o ip mudar sera preciso ajustar
-
-  127.0.0.1  localhost
-  127.0.1.1  rafael-nitroan51544
-  ::1        localhost ip6-localhost ip6-loopback
-  ff02::1    ip6-allnodes
-  ff02::2    ip6-allrouters
-
-# Acessando através do nginx
-$curl cluster.com/grafana  
   <a href="/grafana/login">Found</a>.
 ```
 
