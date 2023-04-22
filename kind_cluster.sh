@@ -7,6 +7,10 @@
 #   -i / --ingress              -> install nginx ingress controller
 #   -p / --prometheus           -> install kube prometheus stack
 #   -pi / --prometheus-ingress  -> install ingress-nginx, kube prometheus stack and service monitor on nginx
+#
+# sh kind_cluster.sh [-b or -c] [options]   -> cluster with or without cilium and optional tools
+# sh kind_cluster.sh [options]              -> cluster without cilium but with optional tools
+#
 
 readonly CILIUM_HELM_CHART_VERSION=1.13.0
 readonly CILIUM_HELM_REPOSITORY_URL=https://helm.cilium.io 
@@ -21,7 +25,7 @@ readonly METRICS_SERVER_NAMESPACE_NAME=metrics-server
 readonly PROMETHEUS_STACK_HELM_CHART_VERSION=45.7.1
 readonly PROMETHEUS_STACK_HELM_REPOSITORY_URL=https://prometheus-community.github.io/helm-charts
 readonly PROMETHEUS_STACK_HELM_RELEASE_NAME=prometheus
-readonly PROMETHEUS_STACK_NAMESPACE_NAME=prometheus
+readonly PROMETHEUS_STACK_NAMESPACE_NAME=monitoring
 
 readonly INGRESS_NGINX_HELM_CHART_VERSION=4.5.2
 readonly INGRESS_NGINX_HELM_REPOSITORY_URL=https://kubernetes.github.io/ingress-nginx
@@ -54,7 +58,7 @@ main() {
       prometheus=true
     fi
       
-    if [ "$1" == "-i" ] || [ "$1" == "-ingress" ] && [ "$ingress_nginx" == false ]; then
+    if [ "$1" == "-i" ] || [ "$1" == "--ingress" ] && [ "$ingress_nginx" == false ]; then
       install_ingress_nginx
       ingress_nginx=true
     fi
@@ -71,18 +75,11 @@ main() {
         install_prometheus_stack
         prometheus=true
       fi
-      
-      echo_green_pattern "Patch prometheus stack"
-      helm upgrade \
-        --repo "$PROMETHEUS_STACK_HELM_REPOSITORY_URL" "$PROMETHEUS_STACK_HELM_RELEASE_NAME" kube-prometheus-stack \
-        --namespace "$PROMETHEUS_STACK_NAMESPACE_NAME" \
-        --reuse-values \
-        --set grafana.ingress.enabled=true \
-        --set grafana.annotations."nginx\.kubernetes\.io\/rewrite-target="/\$2 \
-        --set grafana.hosts=cluster.com \
-        --set grafana.path="/grafana(/|$)(.*)"
 
-      helm get values $PROMETHEUS_STACK_HELM_RELEASE_NAME --namespace $PROMETHEUS_STACK_NAMESPACE_NAME
+       kubectl create ingress grafana-ingress \
+        --namespace $PROMETHEUS_STACK_NAMESPACE_NAME \
+        --class=nginx \
+        --rule="/grafana*=prometheus-grafana:3000" 
 
       echo_green_pattern "Patch ingress ngnix"
       helm upgrade \
@@ -107,18 +104,18 @@ function basic_cluster() {
     kind: Cluster 
     nodes:
       - role: control-plane
-        image: kindest/node:v1.25.3@sha256:f52781bc0d7a19fb6c405c2af83abfeb311f130707a0e219175677e366cc45d1
+        image: kindest/node:v1.25.3@sha256:f52781bc0d7a19fb6c405c2af83abfeb311f130707a0e219175677e366cc45d1    
         extraPortMappings:
           - containerPort: 80
             hostPort: 80
             protocol: TCP
           - containerPort: 443
             hostPort: 443
-            protocol: TCP          
+            protocol: TCP
       - role: worker
-        image: kindest/node:v1.25.3@sha256:f52781bc0d7a19fb6c405c2af83abfeb311f130707a0e219175677e366cc45d1
+        image: kindest/node:v1.25.3@sha256:f52781bc0d7a19fb6c405c2af83abfeb311f130707a0e219175677e366cc45d1 
       - role: worker
-        image: kindest/node:v1.25.3@sha256:f52781bc0d7a19fb6c405c2af83abfeb311f130707a0e219175677e366cc45d1
+        image: kindest/node:v1.25.3@sha256:f52781bc0d7a19fb6c405c2af83abfeb311f130707a0e219175677e366cc45d1      
 EOF
 }
 
@@ -135,11 +132,11 @@ function cluster_with_cni() {
             protocol: TCP
           - containerPort: 443
             hostPort: 443
-            protocol: TCP          
+            protocol: TCP
       - role: worker
-        image: kindest/node:v1.25.3@sha256:f52781bc0d7a19fb6c405c2af83abfeb311f130707a0e219175677e366cc45d1
+        image: kindest/node:v1.25.3@sha256:f52781bc0d7a19fb6c405c2af83abfeb311f130707a0e219175677e366cc45d1     
       - role: worker
-        image: kindest/node:v1.25.3@sha256:f52781bc0d7a19fb6c405c2af83abfeb311f130707a0e219175677e366cc45d1
+        image: kindest/node:v1.25.3@sha256:f52781bc0d7a19fb6c405c2af83abfeb311f130707a0e219175677e366cc45d1      
     networking:
       disableDefaultCNI: true
       kubeProxyMode: none
@@ -232,10 +229,7 @@ EOF
 
 function install_ingress_nginx() {
   echo_green_pattern "Instalando e configurando nginx ingress controller"
-
-  kubectl label node --overwrite kind-control-plane ingress-ready=true
-  kubectl label node --overwrite kind-worker ingress-ready=true
-  kubectl label node --overwrite kind-worker2 ingress-ready=true
+  kubectl label node kind-control-plane ingress-ready=true
 
   helm upgrade \
     --install \
@@ -255,7 +249,6 @@ function install_ingress_nginx() {
       service:
         type: NodePort
       watchIngressWithoutClass: true
-
       nodeSelector:
         ingress-ready: "true"
       tolerations:
@@ -265,7 +258,6 @@ function install_ingress_nginx() {
         - key: "node-role.kubernetes.io/control-plane"
           operator: "Equal"
           effect: "NoSchedule"
-
       publishService:
         enabled: false
       extraArgs:
