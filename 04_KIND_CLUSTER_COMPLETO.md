@@ -18,8 +18,9 @@ Três nodes(_1x control plane, 2x workers_) e alguns addons opcionais(_Cilium CN
 | -p  / --prometheus           | [kube-prometheus-stack](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack) com grafana via NodePort `http://<node-ip>:30000` |
 | -pi / --prometheus-ingress   | nginx-ingress-controller, kube-prometheus-stack e service-monitor-nginx com grafana via ingress `http://localhost/grafana` |
 
-## Exemplos de opções de instalação do cluster
+## Instalando o cluter
 ``` bash
+# RafaelClaumann/some-kubernetes-study/blob/main/kind_cluster.sh
 curl -LO https://raw.githubusercontent.com/RafaelClaumann/some-kubernetes-study/main/kind_cluster.sh
 
 # cluster sem addons
