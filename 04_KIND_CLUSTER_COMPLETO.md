@@ -12,18 +12,19 @@
 - Kube Prometheus Stack (_opcional_)
 - Nginx Ingress Controller (_opcional_)
 
+## Opções de instalação
+| opção 	                     | resultado                                                                                                                    | 
+|------------------------------|------------------------------------------------------------------------------------------------------------------------------|
+| no-options                   | cluster sem addons                                                                                                           |
+| -c / --cni                   | cilium CNI                                                                                                                 	|
+| -m / --metrics               | metrics-server        	                                                                                                      |
+| -i / --ingress               | nginx-ingress-controller        	                                                                                            |
+| -p / --prometheus            | kube-prometheus-stack, grafana via NodePort - http://<node-ip>:30000                                                         |
+| -pi / --prometheus-ingress   | nginx-ingress-controller, kube-prometheus-stack e service-monitor-nginx - grafana exposto via ingress http:localhost/grafana |
+
 ## Como criar o cluster
 ``` bash
-# options:
-#   no-options                  -> install cluster with cilium cni
-#   -b / --basic                -> install clean cluster
-#   -m / --metrics              -> install metrics server(+ cilium)
-#   -i / --ingress              -> install nginx ingress controller(+ cilium)
-#   -p / --prometheus           -> install kube prometheus stack(+ cilium)
-#   -pi / --prometheus-ingress  -> install ingress-nginx and kube prometheus stack(+ cilium)
-
 curl -LO https://raw.githubusercontent.com/RafaelClaumann/some-kubernetes-study/main/kind_cluster.sh
-
 sh kind_cluster.sh [options]
 ```
 
@@ -43,27 +44,28 @@ $helm list --all-namespaces
   cilium          cilium          1         2023-03-10 18:56  deployed    cilium-1.13.0                  1.13.0     
   nginx           ingress         1         2023-03-10 19:01  deployed    ingress-nginx-4.5.2            1.6.4      
   metrics         metrics-server  1         2023-03-10 18:57  deployed    metrics-server-3.8.4           0.6.2      
-  prometheus      prometheus      1         2023-03-10 18:58  deployed    kube-prometheus-stack-45.7.1   v0.63.0
+  prometheus      monitoring      1         2023-03-10 18:58  deployed    kube-prometheus-stack-45.7.1   v0.63.0
 ```
 - Estado do Grafana e Nginx
 ``` bash
 ###
-### Acessando Grafana através do Service NodePort
+### Grafana através do Service NodePort quando kind.sh executado sem a oção -pi
 ###
   $curl 172.18.0.2:30000
     <a href="/grafana/login">Found</a>.
+
 ###
 ### Teste do nginx utilizando o arquivo `validate_nginx_setup.yaml`
 ###
-  $kubectl apply -f https://raw.githubusercontent.com/RafaelClaumann/some-kubernetes-study/main/validate_nginx_setup.yaml
+kubectl apply -f https://raw.githubusercontent.com/RafaelClaumann/some-kubernetes-study/main/validate_nginx_setup.yaml
 
-  $curl localhost/foo/hostname
-    foo-app%
+curl localhost/foo/hostname
+foo-app
 
-  $curl localhost/bar/hostname
-    bar-app%
+curl localhost/bar/hostname
+bar-app
 
-  $kubectl delete -f https://raw.githubusercontent.com/RafaelClaumann/some-kubernetes-study/main/validate_nginx_setup.yaml --force --grace-period=0
+kubectl delete -f https://raw.githubusercontent.com/RafaelClaumann/some-kubernetes-study/main/validate_nginx_setup.yaml --force --grace-period=0
 ```
 
 ---
