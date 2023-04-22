@@ -82,13 +82,7 @@ curl localhost/bar/hostname
 kubectl delete -f https://raw.githubusercontent.com/RafaelClaumann/some-kubernetes-study/main/validate_nginx_setup.yaml
 ```
 
-<br>
-<br>
-<br>
-
----
-
-# Comentarios e links importantes 
+# Outras informações 
 
 #### Kind
 - Onde encontrar o SHA1 das imagens do Kubernetes pro kind? - [link](https://github.com/kubernetes-sigs/kind/releases/tag/v0.17.0)
