@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payment-processor-deployment    
+  labels:                               # DEPLOYMENT LABELS
+    section: 07-services-e-networking   #
+spec:
+  replicas: 1
+  selector:                             #
+    matchLabels:                        # REPLICASET SELECTOR LABELS
+      app: payment-processor            #
+  template:
+    metadata:                           #
+      labels:                           # POD LABELS
+        app: payment-processor          #
+    spec:
+      containers:                       #
+        - image: nginx                  # CONTAINER DEFINITION
+          name: payment-container       #
+          command: ["/bin/sh", "-c"]
+          args:
+            - echo "<h1> Hello, this is Payment processor API </h1>" > usr/share/nginx/html/index.html;
+          ports:
+            - name: payment-port
+              containerPort: 80
+      restartPolicy: Always
