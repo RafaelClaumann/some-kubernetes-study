@@ -4,7 +4,6 @@
 - [kind](https://kind.sigs.k8s.io/)
 - [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/)
 - [helm](https://helm.sh/)
-- Script de instalação - [cluster.sh](https://github.com/RafaelClaumann/some-kubernetes-study/blob/main/kind_cluster.sh)
 
 ## O que tem no cluster
 Três nodes(_1x control plane, 2x workers_) e alguns addons opcionais(_Cilium CNI, Metrics Server, Kube Prometheus Stack, Nginx Ingress Controller_).
