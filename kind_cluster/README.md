@@ -79,7 +79,7 @@ curl localhost/foo/hostname
 curl localhost/bar/hostname
   bar-app
 
-kubectl delete -f https://raw.githubusercontent.com/RafaelClaumann/some-kubernetes-study/main/validate_nginx_setup.yaml --force --grace-period=0
+kubectl delete -f https://raw.githubusercontent.com/RafaelClaumann/some-kubernetes-study/main/validate_nginx_setup.yaml
 ```
 
 <br>
