@@ -13,7 +13,7 @@ Três nodes(_1x control plane, 2x workers_) e alguns addons opcionais(_Cilium CN
 | opção 	                     | resultado                                                                                                                        | 
 |------------------------------|----------------------------------------------------------------------------------------------------------------------------------|
 | no-options                   | cluster sem addons                                                                                                               |
-| -c  / --cni                  | [cilium CNI](https://github.com/cilium/cilium) |
+| -c  / --cni                  | [cilium CNI](https://github.com/cilium/cilium)  - SE USADO, DEVE SER O PRIMEIRO PARÂMETRO |
 | -m  / --metrics              | [metrics-server](https://github.com/kubernetes-sigs/metrics-server)  |
 | -i  / --ingress              | [nginx-ingress-controller](https://github.com/kubernetes/ingress-nginx)  |
 | -p  / --prometheus           | [kube-prometheus-stack](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack) com grafana via NodePort `http://<node-ip>:30000` |
@@ -27,14 +27,18 @@ curl -LO https://raw.githubusercontent.com/RafaelClaumann/some-kubernetes-study/
 # cluster sem addons
 sh kind_cluster.sh
 
-# cilium, metrics-server, nginx-ingress e kube-prometheus
-# grafana em http://localhost/grafana ou http://<node-ip>:30000
-sh kind_cluster.sh -c -m -i -p
-
 # nginx-ingress-controller, kube-prometheus-stack e service-monitor-nginx
 # grafana em http://localhost/grafana ou http://<node-ip>:30000
 # atenção: o kube-prometheus-stack utiliza as métricas coletadas pelo metrics-server
 sh kind_cluster.sh -pi
+
+# cilium, metrics-server, nginx-ingress e kube-prometheus
+# grafana em http://localhost/grafana ou http://<node-ip>:30000
+sh kind_cluster.sh -c -m -i -p
+
+# clium CNI, nginx-ingress-controller, kube-prometheus-stack e service-monitor-nginx
+# grafana em http://localhost/grafana ou http://<node-ip>:30000
+sh kind_cluster.sh -c -pi -m 
 ```
 
 ## Resultado esperado
