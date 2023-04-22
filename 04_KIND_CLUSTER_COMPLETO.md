@@ -29,12 +29,11 @@ sh kind_cluster.sh
 
 # cilium, metrics-server, nginx-ingress e kube-prometheus
 # grafana em http://localhost/grafana ou http://<node-ip>:30000
-# obs: o kube-prometheus-stack utiliza as métricas coletadas pelo metrics-server
 sh kind_cluster.sh -c -m -i -p
 
 # nginx-ingress-controller, kube-prometheus-stack e service-monitor-nginx
 # grafana em http://localhost/grafana ou http://<node-ip>:30000
-# obs: o kube-prometheus-stack utiliza as métricas coletadas pelo metrics-server
+# atenção: o kube-prometheus-stack utiliza as métricas coletadas pelo metrics-server
 sh kind_cluster.sh -pi
 ```
 
