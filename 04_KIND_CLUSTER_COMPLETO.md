@@ -21,7 +21,7 @@ Três nodes(_1x control plane, 2x workers_) e alguns addons opcionais(_Cilium CN
 
 ## Instalando o cluter
 ``` bash
-# RafaelClaumann/some-kubernetes-study/blob/main/kind_cluster.sh
+# Arquivo para instalação: RafaelClaumann/some-kubernetes-study/blob/main/kind_cluster.sh
 curl -LO https://raw.githubusercontent.com/RafaelClaumann/some-kubernetes-study/main/kind_cluster.sh
 
 # cluster sem addons
