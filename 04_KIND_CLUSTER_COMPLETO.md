@@ -4,6 +4,7 @@
 - [kind](https://kind.sigs.k8s.io/)
 - [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/)
 - [helm](https://helm.sh/)
+- linux?
 
 ## O que tem no cluster
 Três nodes(_1x control plane, 2x workers_) e alguns addons opcionais(_Cilium CNI, Metrics Server, Kube Prometheus Stack, Nginx Ingress Controller_).
@@ -77,6 +78,10 @@ curl localhost/bar/hostname
 
 kubectl delete -f https://raw.githubusercontent.com/RafaelClaumann/some-kubernetes-study/main/validate_nginx_setup.yaml --force --grace-period=0
 ```
+
+<br>
+<br>
+<br>
 
 ---
 
