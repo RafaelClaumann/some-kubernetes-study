@@ -13,7 +13,7 @@ Três nodes(_1x control plane, 2x workers_) e alguns addons opcionais(_Cilium CN
 | opção 	                     | resultado                                                                                                                        | 
 |------------------------------|----------------------------------------------------------------------------------------------------------------------------------|
 | no-options                   | cluster sem addons                                                                                                               |
-| -c  / --cni                  | [cilium CNI](https://github.com/cilium/cilium)(SE USADO, DEVE SER O PRIMEIRO PARÂMETRO) |
+| -c  / --cni| [cilium CNI](https://github.com/cilium/cilium), se usado, deve ser o primeiro parâmetro |
 | -m  / --metrics              | [metrics-server](https://github.com/kubernetes-sigs/metrics-server)  |
 | -i  / --ingress              | [nginx-ingress-controller](https://github.com/kubernetes/ingress-nginx)  |
 | -p  / --prometheus           | [kube-prometheus-stack](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack) com grafana via NodePort `http://<node-ip>:30000` |
