@@ -1,15 +1,12 @@
 #! /bin/bash
 
 # options:
-#   -b / --basic                -> install clean cluster
+#   no-options                  -> install clean cluster
 #   -c / --cni                  -> install cilium cni
 #   -m / --metrics              -> install metrics server
 #   -i / --ingress              -> install nginx ingress controller
 #   -p / --prometheus           -> install kube prometheus stack
 #   -pi / --prometheus-ingress  -> install ingress-nginx, kube prometheus stack and service monitor on nginx
-#
-# sh kind_cluster.sh [-b or -c] [options]   -> cluster with or without cilium and optional tools
-# sh kind_cluster.sh [options]              -> cluster without cilium but with optional tools
 #
 
 readonly CILIUM_HELM_CHART_VERSION=1.13.0
