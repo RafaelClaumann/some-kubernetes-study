@@ -4,7 +4,7 @@
 - [01_INSTALACAO_KIND_KUBECTL](https://github.com/RafaelClaumann/some-kubernetes-study/blob/main/01_INSTALACAO_KIND_KUBECTL.md)
 - [02_COMANDOS_UTEIS.md](https://github.com/RafaelClaumann/some-kubernetes-study/blob/main/02_COMANDOS_UTEIS.md)
 - [03_KIND_EXTRA_PORTS_MAPPING](https://github.com/RafaelClaumann/some-kubernetes-study/blob/main/03_KIND_EXTRA_PORTS_MAPPING.md)
-- [04_KIND_CLUSTER_COMPLETO](https://github.com/RafaelClaumann/some-kubernetes-study/blob/main/04_KIND_CLUSTER_COMPLETO.md)
+- [Cluster kind com nginx, prometheus, cilium e metrics-server](https://github.com/RafaelClaumann/some-kubernetes-study/tree/main/kind_cluster)
 
 #### Certified Kubernetes Application Developer (CKAD) Study Guide
 - [2. Core Concepts](https://rafaelclaumann.notion.site/2-Core-Concepts-e67b1c89466c4a0f96fcde9ef6dfc349)
