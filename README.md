@@ -1,11 +1,9 @@
-# some-kubernetes-study
+# Cluster and Tools
+- [Instalação kind e kubectl](https://github.com/RafaelClaumann/some-kubernetes-study/blob/main/01_INSTALACAO_KIND_KUBECTL.md)
+- [Lista de comandos](https://github.com/RafaelClaumann/some-kubernetes-study/blob/main/02_COMANDOS_UTEIS.md)
+- [Cluster kind(nginx, prometheus, cilium e metrics-server)](https://github.com/RafaelClaumann/some-kubernetes-study/tree/main/kind_cluster)
 
-#### Cluster and Tools
-- [01_INSTALACAO_KIND_KUBECTL](https://github.com/RafaelClaumann/some-kubernetes-study/blob/main/01_INSTALACAO_KIND_KUBECTL.md)
-- [02_COMANDOS_UTEIS.md](https://github.com/RafaelClaumann/some-kubernetes-study/blob/main/02_COMANDOS_UTEIS.md)
-- [03_KIND_EXTRA_PORTS_MAPPING](https://github.com/RafaelClaumann/some-kubernetes-study/blob/main/03_KIND_EXTRA_PORTS_MAPPING.md)
-- [Cluster kind com nginx, prometheus, cilium e metrics-server](https://github.com/RafaelClaumann/some-kubernetes-study/tree/main/kind_cluster)
-
+# Books
 #### Certified Kubernetes Application Developer (CKAD) Study Guide
 - [2. Core Concepts](https://rafaelclaumann.notion.site/2-Core-Concepts-e67b1c89466c4a0f96fcde9ef6dfc349)
 - [3. Configuration](https://rafaelclaumann.notion.site/3-Configuration-a2a8513fd03a4e1c8b36b0482f2c0b70)
@@ -23,9 +21,9 @@
 - [14. Managing pods computational resources](https://rafaelclaumann.notion.site/Chapter-14-Managing-pods-computational-resources-8564fd6e89974c358ced27e890953a50)
 - [16. Advanced scheduling](https://rafaelclaumann.notion.site/Chapter-16-Advanced-scheduling-93b93e44fdcd4d478d0987df54a64765)
 
+# Other
 #### dgkanatsios/CKAD-exercises
 - [Core Concepts (13%)](https://rafaelclaumann.notion.site/Core-Concepts-13-021b2b0cde414526be532e5f9945d990)
-
 
 #### Udemy: Kubernetes Certified Application Developer (CKAD) with Tests
 - [StatefulSet, Headless Service & Storage](https://rafaelclaumann.notion.site/StatefulSet-Headless-Service-Storage-755efc798ece4a8bb2d9811f6259f63d)
