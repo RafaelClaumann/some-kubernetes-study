@@ -2,12 +2,14 @@
 
 # options:
 #   no-options                  -> install clean cluster
-#   -c / --cni                  -> install cilium cni
+#   -c / --cni                  -> install cilium cni(should be the first parameter)
 #   -m / --metrics              -> install metrics server
 #   -i / --ingress              -> install nginx ingress controller
 #   -p / --prometheus           -> install kube prometheus stack
 #   -pi / --prometheus-ingress  -> install ingress-nginx, kube prometheus stack and service monitor on nginx
 #
+
+readonly KIND_IMAGE="kindest/node:v1.25.11@sha256:227fa11ce74ea76a0474eeefb84cb75d8dad1b08638371ecf0e86259b35be0c8"
 
 readonly CILIUM_HELM_CHART_VERSION=1.13.0
 readonly CILIUM_HELM_REPOSITORY_URL=https://helm.cilium.io 
@@ -101,7 +103,7 @@ function basic_cluster() {
     kind: Cluster 
     nodes:
       - role: control-plane
-        image: kindest/node:v1.25.3@sha256:f52781bc0d7a19fb6c405c2af83abfeb311f130707a0e219175677e366cc45d1    
+        image: ${KIND_IMAGE} 
         extraPortMappings:
           - containerPort: 80
             hostPort: 80
@@ -110,9 +112,9 @@ function basic_cluster() {
             hostPort: 443
             protocol: TCP
       - role: worker
-        image: kindest/node:v1.25.3@sha256:f52781bc0d7a19fb6c405c2af83abfeb311f130707a0e219175677e366cc45d1 
+        image: ${KIND_IMAGE} 
       - role: worker
-        image: kindest/node:v1.25.3@sha256:f52781bc0d7a19fb6c405c2af83abfeb311f130707a0e219175677e366cc45d1      
+        image: ${KIND_IMAGE} 
 EOF
 }
 
@@ -122,7 +124,7 @@ function cluster_with_cni() {
     kind: Cluster 
     nodes:
       - role: control-plane
-        image: kindest/node:v1.25.3@sha256:f52781bc0d7a19fb6c405c2af83abfeb311f130707a0e219175677e366cc45d1
+        image: ${KIND_IMAGE} 
         extraPortMappings:
           - containerPort: 80
             hostPort: 80
@@ -131,9 +133,9 @@ function cluster_with_cni() {
             hostPort: 443
             protocol: TCP
       - role: worker
-        image: kindest/node:v1.25.3@sha256:f52781bc0d7a19fb6c405c2af83abfeb311f130707a0e219175677e366cc45d1     
+        image: ${KIND_IMAGE} 
       - role: worker
-        image: kindest/node:v1.25.3@sha256:f52781bc0d7a19fb6c405c2af83abfeb311f130707a0e219175677e366cc45d1      
+        image: ${KIND_IMAGE} 
     networking:
       disableDefaultCNI: true
       kubeProxyMode: none
