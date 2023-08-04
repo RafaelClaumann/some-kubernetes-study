@@ -1,6 +1,6 @@
 # Kubernetes Validation Admission Controller
 
-- [Seção09 => Admission Controllers](https://rafaelclaumann.notion.site/Kubernetes-Certified-Application-Developer-CKAD-68eb3670ef054c2d8b43b7de06ef89ba?pvs=4)
+- [Admission Controllers: 147~150](https://www.notion.so/rafaelclaumann/Kubernetes-Certified-Application-Developer-CKAD-68eb3670ef054c2d8b43b7de06ef89ba?pvs=4#a3d26ac96c5143f7a462d16f7216d67e)
 
 python -m venv venv 
 
