@@ -95,14 +95,7 @@ curl --request POST -k \
     }'
 ```
 
-### pontos importantes
-- Porque o campo imagePullPolicy do deploy.yaml tem valor IfNotPresent? [resposta](https://kind.sigs.k8s.io/docs/user/quick-start/#loading-an-image-into-your-cluster)
-- Quais são os campos e atributos do objeto request acessado em server.py? [resposta](https://flask.palletsprojects.com/en/2.3.x/api/#flask.Request)
-- Porque foi preciso criar um arquivo(log_config.py) só para configurar os logs? [resposta](https://flask.palletsprojects.com/en/2.3.x/logging/)
-- k set image --namespace validation deployments warden-deployment warden-ctnr=warden:v1
-
-
-### request body recebido no webhook
+### request body completo recebido no webhook
 ``` json
 {
     "kind": "AdmissionReview",
@@ -295,3 +288,9 @@ curl --request POST -k \
     }
 }
 ```
+
+### pontos importantes
+- Porque o campo imagePullPolicy do deploy.yaml tem valor IfNotPresent? [resposta](https://kind.sigs.k8s.io/docs/user/quick-start/#loading-an-image-into-your-cluster)
+- Quais são os campos e atributos do objeto request acessado em server.py? [resposta](https://flask.palletsprojects.com/en/2.3.x/api/#flask.Request)
+- Porque foi preciso criar um arquivo(log_config.py) só para configurar os logs? [resposta](https://flask.palletsprojects.com/en/2.3.x/logging/)
+- k set image --namespace validation deployments warden-deployment warden-ctnr=warden:v1
