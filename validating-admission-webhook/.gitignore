@@ -1,0 +1,6 @@
+**/__pycache__
+**/venv
+certs/*.key
+certs/*.srl
+certs/*.crt
+certs/*.csr

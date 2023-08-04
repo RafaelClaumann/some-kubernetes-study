@@ -1,0 +1,47 @@
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingWebhookConfiguration
+metadata:
+  name: validating-webhook
+  namespace: validation
+webhooks:
+  - name: warden.validation.svc
+    failurePolicy: Fail
+    sideEffects: None
+    admissionReviewVersions: ["v1","v1beta1"]
+    rules:
+      - apiGroups: ["apps", ""]
+        resources:
+          - "deployments"
+          - "pods"
+        apiVersions:
+          - "*"
+        operations:
+          - CREATE
+    clientConfig:
+      service:
+        name: warden
+        namespace: validation
+        path: /validate/
+      caBundle: |
+        LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURZekNDQWt1Z0F3SUJBZ0lVYi9lTUlSa284
+        c1ZtL2NpU3Yyd01ZKzlGSitJd0RRWUpLb1pJaHZjTkFRRUwKQlFBd1FURWFNQmdHQTFVRUF3d1Ja
+        R1Z0Ynk1dGJHOXdjMmgxWWk1amIyMHhDekFKQmdOVkJBWVRBbFZUTVJZdwpGQVlEVlFRSERBMVRZ
+        VzRnUm5KaGJuTnBjMk52TUI0WERUSXpNRGd3TkRFM01ETXdPRm9YRFRJME1EY3lOVEUzCk1ETXdP
+        Rm93UVRFYU1CZ0dBMVVFQXd3UlpHVnRieTV0Ykc5d2MyaDFZaTVqYjIweEN6QUpCZ05WQkFZVEFs
+        VlQKTVJZd0ZBWURWUVFIREExVFlXNGdSbkpoYm5OcGMyTnZNSUlCSWpBTkJna3Foa2lHOXcwQkFR
+        RUZBQU9DQVE4QQpNSUlCQ2dLQ0FRRUEyL2FrUmdqSUZ2RDRwWVhQYTRRcExwZjIvT2RsM1hRTWZ3
+        Q2RuSldCU0FHOWJTRFE4aVJ4Clc5Vng4L1dIMmtKU0x4dFZ1UnBhYUdkMzZXTW9hcWs1OFJaUC8y
+        S0EyeUhWU3ZHZWhZZStqcUFVNUZnWkJWQVUKT2RhdGhlV2s0OHl6ZllIR3ZIM2hmNlVWeElSODE5
+        eGxBSkVSbTRCUkhZK3RyUjBHL1JWbEw3QWtyTm1nNWd4dQppWFN5RUEzYW8xODE3TjNla25ZemZ1
+        SnNzYWFmNU5YOEs4TkREcTlFWTZmdm9TWTc5YlVWTUxBbXVvNGdWMVZ4CmYwOExNWkp6TngwRC84
+        SzcwMmpmdUlUQUNvNUhIUW41WjNneGFnNEJaU3o3YTFmWDV0WU8weUZJcUNidTBUTEwKS1pJbDNZ
+        Z21BTVlhejBCRVRvU2lNQzArQkVmelpiR25NUUlEQVFBQm8xTXdVVEFkQmdOVkhRNEVGZ1FVOFMy
+        NApwZy8vVHRKS2kwaWs2bUJKT0VHWFlwVXdId1lEVlIwakJCZ3dGb0FVOFMyNHBnLy9UdEpLaTBp
+        azZtQkpPRUdYCllwVXdEd1lEVlIwVEFRSC9CQVV3QXdFQi96QU5CZ2txaGtpRzl3MEJBUXNGQUFP
+        Q0FRRUF4TXY2bHZ5K1NxcDkKM0h0QjhtL3pFR3FuODBBRnFYR1BnTkVFVGx3dmxoSUV3cDluYnVn
+        MmZtUk5jSDY4MWlwQ2FkSkNTSWFYVUFMeAowQUtUb2psZWxpVUNLYnVLWlN3WnE1ZWgvbDNFb2lx
+        VzdzSDU2SGVYZkdVajVXZWRHbXZheVUwL3p3RzF6R3ZrCnZMemhIVVhqMHE2UUlSVFl4dXhUUG12
+        am56dGdWdjQvNUdKZDBBbVprMjJhVk9SbTc0aHZ3Q0pZWW1SVk02djYKZnp6VG9rMWl4UTdEZGQw
+        MGdHemR6TzA2ci9MaU9HZk5JT2NNWTVoMit5RFRKcHNycndvK1JqRGtCTkM1TXoxLwpKOXZrdElx
+        YnRFeHJHc1c3eGJVYVQ3cnRFdGtOOUE5VzhrMlk0c2RLaG9mQzF1TkZLWE53ZXNzclhYN01ZdnJF
+        CnZhK1c4bDNvV0E9PQotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg==
