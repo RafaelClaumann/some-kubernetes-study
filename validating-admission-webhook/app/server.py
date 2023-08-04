@@ -3,7 +3,7 @@ from flask import Flask, request, jsonify
 app = Flask(__name__)
 
 @app.route('/validate', methods=['POST'])
-def deployment_webhook():
+def validating_endpoint():
     req = request.get_json()['request']
 
     app.logger.info('uid: %s, namespace: %s, operation: %s', req['uid'], req['namespace'], req['operation'])

@@ -20,6 +20,12 @@ https://flask.palletsprojects.com/en/2.3.x/api/#flask.request
   The request object is an instance of a Request(https://flask.palletsprojects.com/en/2.3.x/api/#flask.Request).
 
 
+https://flask.palletsprojects.com/en/2.3.x/logging/
+  If you don’t configure logging, Python’s default log level is usually ‘warning’. Nothing below the configured level will be visible.
+  This example uses dictConfig() to create a logging configuration similar to Flask’s default, except for all logs:
+    https://flask.palletsprojects.com/en/2.3.x/logging/#basic-configuration
+
+
 docker build --tag warden:v1 .
 docker run --rm -it -p 8080:5000 warden:v1
 

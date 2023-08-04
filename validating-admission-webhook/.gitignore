@@ -1,6 +1,11 @@
 **/__pycache__
 **/venv
+
+app/server.key
+app/server.crt
+
+!certs/*.sh
+certs/*.crt
 certs/*.key
 certs/*.srl
-certs/*.crt
 certs/*.csr

@@ -1,3 +1,6 @@
+##################
+#### opcao-01 ####
+##################
 
 # criar autoridade certificadora
 openssl req \
@@ -24,6 +27,9 @@ openssl x509 -req \
   -out server.crt
 
 
+##################
+#### opcao-02 ####
+##################
 # https://www.shellhacks.com/create-csr-openssl-without-prompt-non-interactive/
 
 # criar autoridade certificadora
