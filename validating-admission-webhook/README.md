@@ -44,55 +44,22 @@ curl --request POST -k \
     --url https://localhost:5000/validate \
     --header 'Content-Type: application/json' \
     --data '{
-        "kind": "AdmissionReview",
-        "apiVersion": "admission.k8s.io/v1",
-        "request": {
-            "uid": "3e553cbc-c9b8-4c09-93bf-12b259063012",
-            "namespace": "default",
-            "name": "nginx",        
-            "operation": "CREATE",
-            "userInfo": {
-                "username": "kubernetes-admin",
-                "groups": [ "system:masters", "system:authenticated" ]
-            },           
-            "kind": {
-                "group": "",
-                "version": "v1",
-                "kind": "Pod"
-            },
-            "resource": {
-                "group": "",
-                "version": "v1",
-                "resource": "pods"
-            },
-            "object": {
-                "kind": "Pod",
-                "apiVersion": "v1",
-                "metadata": {
-                    "name": "nginx",
+                "kind": "AdmissionReview",
+                "apiVersion": "admission.k8s.io/v1",
+                "request": {
+                    "uid": "3e553cbc-c9b8-4c09-93bf-12b259063012",
                     "namespace": "default",
-                    "uid": "2cbd7f80-0c18-4422-8bb3-f3f94417e606",
-                    "creationTimestamp": "2023-08-04T12: 43: 07Z",
-                    "labels": {
-                        "run": "nginx"
+                    "name": "nginx",
+                    "userInfo": {
+                        "username": "kubernetes-admin",
+                        "groups": [ "system:masters", "system:authenticated" ]
+                    },
+                    "object": {
+                        "kind": "Pod",
+                        "apiVersion": "v1"
                     }
-                },
-                "spec": {
-                    "containers": [
-                        {
-                            "name": "nginx",
-                            "image": "nginx",
-                            "args": [ "/bin/bash" ],
-                            "imagePullPolicy": "Always"
-                        }
-                    ],
-                    "restartPolicy": "Always"
                 }
-            },
-            "oldObject": "none",
-            "dryRun": false
-        }
-    }'
+            }'
 ```
 
 ### request body completo recebido no webhook
