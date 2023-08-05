@@ -8,7 +8,7 @@ openssl req -x509 -sha256 \
   -newkey rsa:2048 \
   -keyout ca.key \
   -out ca.crt \
-  -subj "/C=BR/ST=Santa Catarina/L=Florianopolis/O=Certificate Authority/OU=Self" \
+  -subj "/C=BR/ST=Santa Catarina/L=Florianopolis/O=Certificate Authority/OU=Root" \
   -days 356
 
 # criar uma chave privada(server.key) e uma solicitação de assinatura de certificado(server.csr) para
