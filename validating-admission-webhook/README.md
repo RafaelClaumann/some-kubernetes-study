@@ -20,6 +20,9 @@
 - openssl
 - python
 
+### implantar com um único comando
+- sh build.sh
+
 ### passo-a-passo para implantar o webhook
 - Gerar os certificados usando o script _certs.sh_
 - Copiar o certificado(_server.crt_) e a chave privada(_server.key_) para a pasta app
@@ -31,7 +34,7 @@
 - Acompanhar os logs do app: `kubectl logs --namespace validation <pod_name> --follow`
 - Criar um pod arbitrário e avaliar os logs do app: `kubectl run --rm -it nginx --image nginx -- /bin/bash`
 
-### pass-a-passo para iniciar o servidor python local
+### passo-a-passo para iniciar o servidor python local
 - Criar _venv_ na pasta app: `python -m venv venv`
 - Ativar o _venv_: `source ./venv/bin/activate`
 - Instalar dependencias: `pip install -r requirements.txt`
