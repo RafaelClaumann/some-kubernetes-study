@@ -1,5 +1,7 @@
 FROM python:3.9-slim-bullseye
 
+ENV TZ=America/Sao_Paulo
+
 RUN pip3 install Flask
 
 COPY . .

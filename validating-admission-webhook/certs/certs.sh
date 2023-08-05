@@ -29,17 +29,4 @@ openssl x509 -req \
   -CAkey ca.key \
   -CAcreateserial \
   -out server.crt \
-  -days 365  
-
-# remover certificado(server.crt) e chave privada(server.key) antigos da pasta app
-rm -r ../app/server.key &>/dev/null
-rm -r ../app/server.crt &>/dev/null
-
-# copiar novo certificado(server.crt) e chave privada(server.key) para a pasta app
-cp server.key ../app/server.key
-cp server.crt ../app/server.crt
-
-# copiar o certificado da CA(ca.crt) em base64 para o campo caBundle de kubernetes/webook.yaml
-readonly CA_CRT_ONE_LINE=$(echo $(cat ca.crt | tr -d /n))
-readonly CA_CRT_BASE_64=$(echo $CA_CRT_ONE_LINE | base64 -w -0)
-sed -i "s/caBundle:\s.*/caBundle: $CA_CRT_BASE_64/g" ../kubernetes/webhook.yaml
+  -days 365
