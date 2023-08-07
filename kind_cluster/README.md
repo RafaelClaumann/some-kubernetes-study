@@ -7,7 +7,7 @@ O script `cluster.sh` cria um cluster Kubernetes composto por um _control-plane_
 - [helm](https://helm.sh/)
 - linux
 
-### Opções de instalação
+### Opções de criação
 | opção 	                     | resultado                                                                                                                        | 
 |------------------------------|----------------------------------------------------------------------------------------------------------------------------------|
 | no-options                   | sem addons                                                                                                               |
@@ -19,36 +19,35 @@ O script `cluster.sh` cria um cluster Kubernetes composto por um _control-plane_
 
 ### Criando o cluster
 ``` bash
-# Arquivo para instalação: some-kubernetes-study/blob/main/kind_cluster.sh
-curl -LO https://raw.githubusercontent.com/RafaelClaumann/some-kubernetes-study/main/kind_cluster.sh
+# download do arquivo para criação do cluster
+$ curl -LO https://raw.githubusercontent.com/RafaelClaumann/some-kubernetes-study/main/kind_cluster.sh
 
 # cluster sem addons
-sh kind_cluster.sh
+$ sh kind_cluster.sh
 
-# nginx-ingress-controller, kube-prometheus-stack e service-monitor-nginx
+# nginx-ingress-controller, service-monitor-nginx, kube-prometheus-stack
 # grafana em http://localhost/grafana ou http://<node-ip>:30000
-# atenção: o kube-prometheus-stack utiliza as métricas coletadas pelo metrics-server
-sh kind_cluster.sh -pi
+$ sh kind_cluster.sh -pi
 
-# cilium, metrics-server, nginx-ingress e kube-prometheus
+# cilium CNI, metrics-server, nginx-ingress-controller e kube-prometheus-stack
 # grafana em http://localhost/grafana ou http://<node-ip>:30000
-sh kind_cluster.sh -c -m -i -p
+$ sh kind_cluster.sh -c -m -i -p
 
-# clium CNI, nginx-ingress-controller, kube-prometheus-stack e service-monitor-nginx
+# cilium CNI, metrics-server, nginx-ingress-controller, service-monitor-nginx e kube-prometheus-stack
 # grafana em http://localhost/grafana ou http://<node-ip>:30000
-sh kind_cluster.sh -c -pi -m 
+$ sh kind_cluster.sh -c -m -pi 
 ```
 
 ### Resultado esperado
 ``` bash
-# Nodes ready
+# nodes ready
 $ kubectl get nodes -o wide     
   NAME                STATUS  ROLES          VERSION  INTERNAL-IP  EXTERNAL-IP  OS-IMAGE        CONTAINER-RUNTIME
   kind-control-plane  Ready   control-plane  v1.25.3  172.18.0.4   <none>       Ubuntu 22.04.1  containerd://1.6.9
   kind-worker         Ready   <none>         v1.25.3  172.18.0.2   <none>       Ubuntu 22.04.1  containerd://1.6.9
   kind-worker2        Ready   <none>         v1.25.3  172.18.0.3   <none>       Ubuntu 22.04.1  containerd://1.6.9
 
-# Helm charts instalados
+# hHelm charts instalados
 $ helm list --all-namespaces  
   NAME            NAMESPACE       REVISION  STATUS      CHART                          APP VERSION
   cilium          cilium          1         deployed    cilium-1.13.0                  1.13.0     
@@ -56,15 +55,15 @@ $ helm list --all-namespaces
   metrics         metrics-server  1         deployed    metrics-server-3.8.4           0.6.2      
   prometheus      monitoring      1         deployed    kube-prometheus-stack-45.7.1   v0.63.0
 
-# Grafana acessivel via Service NodePort
+# grafana acessivel via Service NodePort
 $ curl 172.18.0.2:30000
   <a href="/grafana/login">Found</a>
 
-# Grafana acessivel via Ingress
+# grafana acessivel via Ingress
 $ curl localhost/grafana
   <a href="/grafana/login">Found</a>
 
-# Validação do nginx
+# validação do nginx
 # https://kind.sigs.k8s.io/docs/user/ingress/#using-ingress
 $ kubectl apply -f https://kind.sigs.k8s.io/examples/ingress/usage.yaml
 
