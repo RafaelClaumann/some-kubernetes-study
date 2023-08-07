@@ -40,43 +40,41 @@ sh kind_cluster.sh -c -pi -m
 ```
 
 ### Resultado esperado
-- Estado dos nodes
 ``` bash
-$kubectl get nodes -o wide     
+# Nodes ready
+$ kubectl get nodes -o wide     
   NAME                STATUS  ROLES          VERSION  INTERNAL-IP  EXTERNAL-IP  OS-IMAGE        CONTAINER-RUNTIME
   kind-control-plane  Ready   control-plane  v1.25.3  172.18.0.4   <none>       Ubuntu 22.04.1  containerd://1.6.9
   kind-worker         Ready   <none>         v1.25.3  172.18.0.2   <none>       Ubuntu 22.04.1  containerd://1.6.9
   kind-worker2        Ready   <none>         v1.25.3  172.18.0.3   <none>       Ubuntu 22.04.1  containerd://1.6.9
-```
-- Estado dos helm charts instalados
-``` bash
-$helm list --all-namespaces  
+
+# Helm charts instalados
+$ helm list --all-namespaces  
   NAME            NAMESPACE       REVISION  STATUS      CHART                          APP VERSION
   cilium          cilium          1         deployed    cilium-1.13.0                  1.13.0     
   nginx           ingress         1         deployed    ingress-nginx-4.5.2            1.6.4      
   metrics         metrics-server  1         deployed    metrics-server-3.8.4           0.6.2      
   prometheus      monitoring      1         deployed    kube-prometheus-stack-45.7.1   v0.63.0
-```
-- Validando grafana e nginx
-``` bash
-### Grafana acessível através de NodePort ou Ingress
-curl 172.18.0.2:30000
+
+# Grafana acessivel via Service NodePort
+$ curl 172.18.0.2:30000
   <a href="/grafana/login">Found</a>
 
-curl localhost/grafana
+# Grafana acessivel via Ingress
+$ curl localhost/grafana
   <a href="/grafana/login">Found</a>
 
-### Validando nginx
-### https://kind.sigs.k8s.io/docs/user/ingress/#using-ingress
-kubectl apply -f https://kind.sigs.k8s.io/examples/ingress/usage.yaml
+# Validação do nginx
+# https://kind.sigs.k8s.io/docs/user/ingress/#using-ingress
+$ kubectl apply -f https://kind.sigs.k8s.io/examples/ingress/usage.yaml
 
-curl localhost/foo/hostname
+$ curl localhost/foo/hostname
   foo-app
 
-curl localhost/bar/hostname
+$ curl localhost/bar/hostname
   bar-app
 
-kubectl delete -f https://kind.sigs.k8s.io/examples/ingress/usage.yaml
+$ kubectl delete -f https://kind.sigs.k8s.io/examples/ingress/usage.yaml
 ```
 
 # Outras informações 
