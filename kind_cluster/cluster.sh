@@ -1,13 +1,22 @@
 #! /bin/bash
 
 # options:
-#   no-options                  -> install clean cluster
-#   -c / --cni                  -> install cilium cni(should be the first parameter)
-#   -m / --metrics              -> install metrics server
-#   -i / --ingress              -> install nginx ingress controller
-#   -p / --prometheus           -> install kube prometheus stack
-#   -pi / --prometheus-ingress  -> install ingress-nginx, kube prometheus stack and service monitor on nginx
+#   no-options                   -> install clean cluster
+#   -c  / --cni                  -> install cilium cni(should be the first parameter)
+#   -m  / --metrics              -> install metrics server
+#   -i  / --ingress              -> install nginx ingress controller
+#   -p  / --prometheus           -> install kube prometheus stack
+#   -pi / --prometheus-ingress   -> install ingress-nginx, kube prometheus stack and service monitor on nginx
+
+# examples:
+#   sh cluster.sh -c -m -p -i
+#   sh cluster.sh --cni --metrics --prometheus --ingress
 #
+#   sh cluster.sh -m -p -i
+#   sh cluster.sh --metrics --prometheus --ingress
+
+#   sh cluster.sh -c -m -pi
+#   sh cluster.sh --cni --metrics --prometheus-ingress
 
 readonly KIND_IMAGE="kindest/node:v1.25.11@sha256:227fa11ce74ea76a0474eeefb84cb75d8dad1b08638371ecf0e86259b35be0c8"
 
@@ -32,7 +41,8 @@ readonly INGRESS_NGINX_HELM_RELEASE_NAME=nginx
 readonly INGRESS_NGINX_NAMESPACE_NAME=ingress
 
 main() {
-
+  # parâmetro posicional '-c / --cni' deve ser o primeiro fornecido para o script
+  # ele define se o cluster será criado com Cilium CNI ou Kindnet CNI(default)
   if [ "$1" == "-c" ] || [ "$1" == "--cni" ]; then
     echo_green_pattern "Criando cluster com Cilium CNI"
     cluster_with_cni
@@ -41,57 +51,62 @@ main() {
     basic_cluster
   fi
 
+  # variaveis usadas para controlar possíveis repetições de parâmetros posicionais
   metrics_server=false
   prometheus=false
   ingress_nginx=false
   prometheus_ingress=false
+
+  # laço de repetição sobre os parâmetros posicionais fornecidos na invocação do script
   while [ "$1" ]
-  do
-    if [ "$1" == "-m" ] || [ "$1" == "--metrics" ] && [ "$metrics_server" == false ]; then
-      install_metrics_server
-      metrics_server=true
-    fi
+    do
+      if [ "$1" == "-m" ] || [ "$1" == "--metrics" ] && [ "$metrics_server" == false ]; then
+        install_metrics_server
+        metrics_server=true
+      fi
 
-    if [ "$1" == "-p" ] || [ "$1" == "--prometheus" ] && [ "$prometheus" == false ]; then
-      install_prometheus_stack
-      prometheus=true
-    fi
-      
-    if [ "$1" == "-i" ] || [ "$1" == "--ingress" ] && [ "$ingress_nginx" == false ]; then
-      install_ingress_nginx
-      ingress_nginx=true
-    fi
-
-    if [ "$1" == "-pi" ] || [ "$1" == "--prometheus-ingress" ] && [ "$prometheus_ingress" == false ]; then
-      NGINX=$(helm list --all-namespaces --deployed --no-headers --selector="name=$INGRESS_NGINX_HELM_RELEASE_NAME" --short)
-      if [ "$NGINX" != "$INGRESS_NGINX_HELM_RELEASE_NAME" ]; then
+      if [ "$1" == "-p" ] || [ "$1" == "--prometheus" ] && [ "$prometheus" == false ]; then
+        install_prometheus_stack
+        prometheus=true
+      fi
+        
+      if [ "$1" == "-i" ] || [ "$1" == "--ingress" ] && [ "$ingress_nginx" == false ]; then
         install_ingress_nginx
         ingress_nginx=true
       fi
 
-      PROMETHEUS=$(helm list --all-namespaces --deployed --no-headers --selector="name=$PROMETHEUS_STACK_HELM_RELEASE_NAME" --short)
-      if [ "$PROMETHEUS" != "$PROMETHEUS_STACK_HELM_RELEASE_NAME" ]; then
-        install_prometheus_stack
-        prometheus=true
-      fi
+      if [ "$1" == "-pi" ] || [ "$1" == "--prometheus-ingress" ] && [ "$prometheus_ingress" == false ]; then
+        # verifica se existe release 'nginx' implantado com helm e, se não existir, ele será implantado
+        NGINX=$(helm list --all-namespaces --deployed --no-headers --selector="name=$INGRESS_NGINX_HELM_RELEASE_NAME" --short)
+        if [ "$NGINX" != "$INGRESS_NGINX_HELM_RELEASE_NAME" ]; then
+          install_ingress_nginx
+          ingress_nginx=true
+        fi
+        
+        # verifica se existe release 'prometheus_stack' implantado com helm e, se não existir, ele será implantado
+        PROMETHEUS=$(helm list --all-namespaces --deployed --no-headers --selector="name=$PROMETHEUS_STACK_HELM_RELEASE_NAME" --short)
+        if [ "$PROMETHEUS" != "$PROMETHEUS_STACK_HELM_RELEASE_NAME" ]; then
+          install_prometheus_stack
+          prometheus=true
+        fi
 
-       kubectl create ingress grafana-ingress \
+        # criando recurso Ingress para acessar o grafana via http://localhost/grafana
+        kubectl create ingress grafana-ingress \
         --namespace $PROMETHEUS_STACK_NAMESPACE_NAME \
         --class=nginx \
         --rule="/grafana*=prometheus-grafana:3000" 
 
-      echo_green_pattern "Patch ingress ngnix"
-      helm upgrade \
-        --repo "$INGRESS_NGINX_HELM_REPOSITORY_URL" "$INGRESS_NGINX_HELM_RELEASE_NAME" ingress-nginx \
-        --namespace "$INGRESS_NGINX_NAMESPACE_NAME" \
-        --reuse-values \
-        --set controller.metrics.enabled=true \
-        --set controller.metrics.serviceMonitor.enabled=true \
-        --set controller.metrics.serviceMonitor.additionalLabels."release="prometheus
-      
-      helm get values $INGRESS_NGINX_HELM_RELEASE_NAME --namespace $INGRESS_NGINX_NAMESPACE_NAME
-    fi
-
+        # patch no nginx para exportar suas métricas
+        # https://kubernetes.github.io/ingress-nginx/user-guide/monitoring/#prometheus-and-grafana-installation-using-service-monitors
+        echo_green_pattern "Patch ingress ngnix"
+        helm upgrade \
+          --repo "$INGRESS_NGINX_HELM_REPOSITORY_URL" "$INGRESS_NGINX_HELM_RELEASE_NAME" ingress-nginx \
+          --namespace "$INGRESS_NGINX_NAMESPACE_NAME" \
+          --reuse-values \
+          --set controller.metrics.enabled=true \
+          --set controller.metrics.serviceMonitor.enabled=true \
+          --set controller.metrics.serviceMonitor.additionalLabels."release="$PROMETHEUS_STACK_HELM_RELEASE_NAME
+      fi
       shift
   done
   exit 0
@@ -217,6 +232,8 @@ function install_prometheus_stack() {
       adminPassword: admin
 EOF
 
+  # patch para tornar o service prometheus-grafana NodePort
+  # grafana acessivel em http://<node-ip-address>:30000
   kubectl patch \
    --namespace $PROMETHEUS_STACK_NAMESPACE_NAME \
    service prometheus-grafana \
