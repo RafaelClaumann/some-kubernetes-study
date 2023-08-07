@@ -1,27 +1,25 @@
-# Instalação kind cluster completo
+# Script kind cluster
+O script `cluster.sh` cria um cluster Kubernetes composto por um _control-plane_ e dois _worker nodes_ com addons opcionais usando kind.
 
-## Pre requisitos
+### Pre requisitos
 - [kind](https://kind.sigs.k8s.io/)
 - [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/)
 - [helm](https://helm.sh/)
 - linux
 
-## O que tem no cluster
-Três nodes(_1x control plane, 2x workers_) e alguns addons opcionais(_Cilium CNI, Metrics Server, Kube Prometheus Stack, Nginx Ingress Controller_).
-
-## Opções de instalação
+### Opções de instalação
 | opção 	                     | resultado                                                                                                                        | 
 |------------------------------|----------------------------------------------------------------------------------------------------------------------------------|
-| no-options                   | cluster criado sem addons                                                                                                               |
-| -c  _ou_ --cni | cluster criado com [cilium CNI](https://github.com/cilium/cilium), se usado, deve ser o primeiro parâmetro |
-| -m  _ou_ --metrics              | cluster criado com [metrics-server](https://github.com/kubernetes-sigs/metrics-server)  |
-| -i  _ou_ --ingress              | cluster criado com [nginx-ingress-controller](https://github.com/kubernetes/ingress-nginx)  |
-| -p  _ou_ --prometheus           | cluster criado com  [kube-prometheus-stack](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack) e grafana via NodePort `http://<node-ip>:30000` |
-| -pi ou --prometheus-ingress   | cluster criado com nginx-ingress-controller, kube-prometheus-stack, service-monitor-nginx e grafana via ingress `http://localhost/grafana` |
+| no-options                   | sem addons                                                                                                               |
+| -c  ou --cni | [cilium CNI](https://github.com/cilium/cilium) (deve ser o primeiro parâmetro) |
+| -m  ou --metrics              | [metrics-server](https://github.com/kubernetes-sigs/metrics-server)  |
+| -i  ou --ingress              | [nginx-ingress-controller](https://github.com/kubernetes/ingress-nginx)  |
+| -p  ou --prometheus           | [kube-prometheus-stack](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack) e grafana via NodePort `http://<node-ip>:30000` |
+| -pi ou --prometheus-ingress   | nginx-ingress-controller, kube-prometheus-stack, service-monitor-nginx e grafana via ingress `http://localhost/grafana` |
 
-## Instalando o cluster
+### Criando o cluster
 ``` bash
-# Arquivo para instalação: RafaelClaumann/some-kubernetes-study/blob/main/kind_cluster.sh
+# Arquivo para instalação: some-kubernetes-study/blob/main/kind_cluster.sh
 curl -LO https://raw.githubusercontent.com/RafaelClaumann/some-kubernetes-study/main/kind_cluster.sh
 
 # cluster sem addons
@@ -41,7 +39,7 @@ sh kind_cluster.sh -c -m -i -p
 sh kind_cluster.sh -c -pi -m 
 ```
 
-## Resultado esperado
+### Resultado esperado
 - Estado dos nodes
 ``` bash
 $kubectl get nodes -o wide     
