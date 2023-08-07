@@ -68,8 +68,9 @@ curl localhost/grafana
   <a href="/grafana/login">Found</a>
 
 ###
-### Teste do nginx utilizando o arquivo `validate_nginx_setup.yaml`
-kubectl apply -f https://raw.githubusercontent.com/RafaelClaumann/some-kubernetes-study/main/validate_nginx_setup.yaml
+### Validando nginx
+### https://kind.sigs.k8s.io/docs/user/ingress/#using-ingress
+kubectl apply -f https://kind.sigs.k8s.io/examples/ingress/usage.yaml
 
 curl localhost/foo/hostname
   foo-app
@@ -77,7 +78,7 @@ curl localhost/foo/hostname
 curl localhost/bar/hostname
   bar-app
 
-kubectl delete -f https://raw.githubusercontent.com/RafaelClaumann/some-kubernetes-study/main/validate_nginx_setup.yaml
+kubectl delete -f https://kind.sigs.k8s.io/examples/ingress/usage.yaml
 ```
 
 # Outras informações 
