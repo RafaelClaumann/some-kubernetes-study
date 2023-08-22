@@ -1,0 +1,9 @@
+prometheus:
+  prometheusSpec:
+    podMonitorSelectorNilUsesHelmValues: false
+    serviceMonitorSelectorNilUsesHelmValues: false
+grafana:
+  env:
+    GF_SERVER_ROOT_URL: "http://cluster.com/grafana"
+    GF_SERVER_SERVE_FROM_SUB_PATH: "true"
+  adminPassword: admin

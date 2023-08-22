@@ -9,15 +9,28 @@
 #   -pi / --prometheus-ingress   -> install ingress-nginx, kube prometheus stack and service monitor on nginx
 
 # examples:
+#   sh cluster.sh
+#   sh cluster.sh
+#
+#   sh cluster.sh -c -i
+#   sh cluster.sh --cni --ingress 
+#
+#   sh cluster.sh -i
+#   sh cluster.sh --ingress
+#
+#   sh cluster.sh -p
+#   sh cluster.sh --prometheus
+#
 #   sh cluster.sh -c -m -p -i
 #   sh cluster.sh --cni --metrics --prometheus --ingress
 #
 #   sh cluster.sh -m -p -i
 #   sh cluster.sh --metrics --prometheus --ingress
-
+#
 #   sh cluster.sh -c -m -pi
 #   sh cluster.sh --cni --metrics --prometheus-ingress
 
+readonly CLUSTER_NAME=dev
 readonly KIND_IMAGE="kindest/node:v1.25.11@sha256:227fa11ce74ea76a0474eeefb84cb75d8dad1b08638371ecf0e86259b35be0c8"
 
 readonly CILIUM_HELM_CHART_VERSION=1.13.0
@@ -113,50 +126,11 @@ main() {
 }
 
 function basic_cluster() {
-    kind create cluster --config - <<EOF
-    apiVersion: kind.x-k8s.io/v1alpha4
-    kind: Cluster 
-    nodes:
-      - role: control-plane
-        image: ${KIND_IMAGE} 
-        extraPortMappings:
-          - containerPort: 80
-            hostPort: 80
-            protocol: TCP
-          - containerPort: 443
-            hostPort: 443
-            protocol: TCP
-      - role: worker
-        image: ${KIND_IMAGE} 
-      - role: worker
-        image: ${KIND_IMAGE} 
-EOF
+  kind create cluster --name $CLUSTER_NAME --config "./cluster_manifest/without_cni.yaml"
 }
 
 function cluster_with_cni() {
-  kind create cluster --config - <<EOF
-    apiVersion: kind.x-k8s.io/v1alpha4
-    kind: Cluster 
-    nodes:
-      - role: control-plane
-        image: ${KIND_IMAGE} 
-        extraPortMappings:
-          - containerPort: 80
-            hostPort: 80
-            protocol: TCP
-          - containerPort: 443
-            hostPort: 443
-            protocol: TCP
-      - role: worker
-        image: ${KIND_IMAGE} 
-      - role: worker
-        image: ${KIND_IMAGE} 
-    networking:
-      disableDefaultCNI: true
-      kubeProxyMode: none
-      podSubnet: "10.244.0.0/16"        # Configuracao para o Cilium
-      serviceSubnet: "10.96.0.0/12"     # Configuracao para o Cilium
-EOF
+  kind create cluster --name $CLUSTER_NAME --config "./cluster_manifest/with_cni.yaml"
 
   echo_green_pattern "Instalando e configurando Cilium CNI"
   helm upgrade \
@@ -165,18 +139,7 @@ EOF
     --namespace $CILIUM_NAMESPACE_NAME \
     --create-namespace \
     --repo $CILIUM_HELM_REPOSITORY_URL $CILIUM_HELM_RELEASE_NAME cilium \
-    --set kubeProxyReplacement=strict \
-    --set k8sServiceHost=kind-control-plane \
-    --set k8sServicePort=6443 \
-    --set hostServices.enabled=false \
-    --set externalIPs.enabled=true \
-    --set nodePort.enabled=true \
-    --set hostPort.enabled=true \
-    --set image.pullPolicy=IfNotPresent \
-    --set ipam.mode=kubernetes \
-    --set hubble.enabled=false \
-    --set hubble.relay.enabled=false \
-    --set hubble.ui.enabled=false
+    --values "./helm_values/cilium.yaml"
 
   echo_green_pattern "Esperando a instalação do Cilium CNI"
   kubectl wait \
@@ -198,14 +161,7 @@ function install_metrics_server() {
     --namespace $METRICS_SERVER_NAMESPACE_NAME \
     --create-namespace \
     --repo $METRICS_SERVER_HELM_REPOSITORY_URL $METRICS_SERVER_HELM_RELEASE_NAME  metrics-server \
-    --values - <<EOF
-    defaultArgs:
-      - --cert-dir=/tmp
-      - --kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname
-      - --kubelet-use-node-status-port
-      - --metric-resolution=15s
-      - --kubelet-insecure-tls
-EOF
+    --values "./helm_values/metrics.yaml"
 
   echo
   kubectl get pods --namespace $METRICS_SERVER_NAMESPACE_NAME
@@ -220,17 +176,7 @@ function install_prometheus_stack() {
     --namespace $PROMETHEUS_STACK_NAMESPACE_NAME \
     --create-namespace \
     --repo $PROMETHEUS_STACK_HELM_REPOSITORY_URL $PROMETHEUS_STACK_HELM_RELEASE_NAME kube-prometheus-stack \
-    --values - <<EOF
-    prometheus:
-      prometheusSpec:
-        podMonitorSelectorNilUsesHelmValues: false
-        serviceMonitorSelectorNilUsesHelmValues: false
-    grafana:
-      env:
-        GF_SERVER_ROOT_URL: "http://cluster.com/grafana"
-        GF_SERVER_SERVE_FROM_SUB_PATH: "true"
-      adminPassword: admin
-EOF
+    --values "./helm_values/prometheus.yaml"
 
   # patch para tornar o service prometheus-grafana NodePort
   # grafana acessivel em http://<node-ip-address>:30000
@@ -245,7 +191,7 @@ EOF
 
 function install_ingress_nginx() {
   echo_green_pattern "Instalando e configurando nginx ingress controller"
-  kubectl label node kind-control-plane ingress-ready=true
+  kubectl label node $CLUSTER_NAME-control-plane ingress-ready=true
 
   helm upgrade \
     --install \
@@ -253,32 +199,7 @@ function install_ingress_nginx() {
     --namespace $INGRESS_NGINX_NAMESPACE_NAME \
     --create-namespace \
     --repo $INGRESS_NGINX_HELM_REPOSITORY_URL $INGRESS_NGINX_HELM_RELEASE_NAME ingress-nginx \
-    --values - <<EOF  
-    controller:
-      updateStrategy:
-        type: RollingUpdate
-        rollingUpdate:
-          maxUnavailable: 1
-      hostPort:
-        enabled: true
-      terminationGracePeriodSeconds: 0
-      service:
-        type: NodePort
-      watchIngressWithoutClass: true
-      nodeSelector:
-        ingress-ready: "true"
-      tolerations:
-        - key: "node-role.kubernetes.io/master"
-          operator: "Equal"
-          effect: "NoSchedule"
-        - key: "node-role.kubernetes.io/control-plane"
-          operator: "Equal"
-          effect: "NoSchedule"
-      publishService:
-        enabled: false
-      extraArgs:
-        publish-status-address: localhost
-EOF
+    --values "./helm_values/ingress.yaml"
 
   echo
   kubectl get pods --namespace $INGRESS_NGINX_NAMESPACE_NAME
