@@ -19,7 +19,7 @@ export ip_address=$(\
 echo "$ip_address example.com" | tr -d '"' | sudo tee -a /etc/hosts
 ```
 
-### Exemplo _/etc/hosts_.
+#### Exemplo _/etc/hosts_
 ``` shell
 cat /etc/hosts
     127.0.0.1  localhost
@@ -32,7 +32,7 @@ cat /etc/hosts
     172.19.255.200 test.com
 ```
 
-## Criar o certificado assinado e chave privada:
+## Criar o certificado assinado e chave privada
 ``` shell
 # gerando certificado
 openssl req \
