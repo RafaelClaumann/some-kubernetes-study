@@ -82,7 +82,7 @@ curl --cacert tls.crt https://example.com/bar/hostname
     <body>
     </html>
 
-curl --cacert tls.crt https://example.test.com/bar/hostname
+curl --cacert tls.crt https://test.com/bar/hostname
     bar-app
 
 curl --cacert tls.crt https://test.com/foo/hostname
