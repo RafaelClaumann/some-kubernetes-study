@@ -1,12 +1,14 @@
-### 1 - Configurar o arquivo _/etc/hosts_
-- Cluster kind com metallb e Service nginx do tipo LoadBalancer.
+# Nginx Ingress Controller com TLS
+
+## 1 - Configurar o arquivo _/etc/hosts_
+### Cluster kind com metallb e Service nginx do tipo LoadBalancer.
 ``` shell
 # endereço IP do Service ingress controller do namespace ingress
-export ingress_addr=\kubectl get svc -n ingress -o=jsonpath='{.items[0].status.loadBalancer.ingress[0].ip}'
+export ingress_addr=kubectl get svc -n ingress -o=jsonpath='{.items[0].status.loadBalancer.ingress[0].ip}'
 echo "$ingress_addr example.com" | tr -d '"' | sudo tee -a /etc/hosts
 ```
 
-- Cluster kind sem metallb e Service nginx do tipo NodePort.
+### Cluster kind sem metallb e Service nginx do tipo NodePort.
 ``` shell
 # endereço IP do container control-plane
 export ip_address=$(\
@@ -17,7 +19,7 @@ export ip_address=$(\
 echo "$ip_address example.com" | tr -d '"' | sudo tee -a /etc/hosts
 ```
 
-- Exemplo _/etc/hosts_
+### Exemplo _/etc/hosts_.
 ``` shell
 cat /etc/hosts
     127.0.0.1  localhost
@@ -30,7 +32,7 @@ cat /etc/hosts
     172.19.255.200 test.com
 ```
 
-### 2 - Criar o certificado assinado e chave privada:
+## 2 - Criar o certificado assinado e chave privada:
 ``` shell
 # gerando certificado
 openssl req \
@@ -59,26 +61,37 @@ openssl x509 -noout -text -in tls.crt
                     DNS:example.com, DNS:test.com
 ```
 
-### 3 - Criar um Secret para armazenar certificado e chave privada
+## 3 - Criar um Secret para armazenar certificado e chave privada
 ``` shell
     kubectl create secret tls tls-secret --cert=tls.crt --key=tls.key
 ```
 
-### 4 - Aplicar o arquivo deploy
+## 4 - Aplicar o arquivo deploy
 ``` shell
     kubectl apply -f deploy.yaml
 ```
 
-### 5 - Validar as chamadas HTTP e HTTPS.
+## 5 - Validar as chamadas HTTP e HTTPS.
 ``` shell
 curl --cacert tls.crt https://example.com/foo/hostname
     foo-app
 
+curl --cacert tls.crt https://example.com/bar/hostname
+    <html>
+    <head><title>404 Not Found</title></head>
+    <body>
+    </html>
+
 curl --cacert tls.crt https://example.test.com/bar/hostname
     bar-app
+
+curl --cacert tls.crt https://test.com/foo/hostname
+    <html>
+    <head><title>404 Not Found</title></head>
+    </html>    
 ```
 
-----
+## Links
 
 - Nginx Ingress Controller Kind - [link](https://kind.sigs.k8s.io/docs/user/ingress/)
 - Metallb Kind - [link](https://kind.sigs.k8s.io/docs/user/loadbalancer/)
