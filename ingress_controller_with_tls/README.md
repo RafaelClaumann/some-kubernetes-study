@@ -1,6 +1,6 @@
 # Nginx Ingress Controller com TLS
 
-## Configurar o arquivo _/etc/hosts_
+## Configurar arquivo _/etc/hosts_
 #### Cluster kind com metallb e Service nginx do tipo LoadBalancer
 ``` shell
 # endereço IP do Service ingress controller do namespace ingress
@@ -32,7 +32,7 @@ cat /etc/hosts
     172.19.255.200 test.com
 ```
 
-## Criar o certificado assinado e chave privada
+## Criar certificado assinado e chave privada
 ``` shell
 # gerando certificado
 openssl req \
@@ -61,17 +61,17 @@ openssl x509 -noout -text -in tls.crt
                     DNS:example.com, DNS:test.com
 ```
 
-## Criar um Secret para armazenar certificado e chave privada
+## Criar Secret para armazenar certificado e chave privada
 ``` shell
     kubectl create secret tls tls-secret --cert=tls.crt --key=tls.key
 ```
 
-## Aplicar o arquivo deploy
+## Aplicar arquivo deploy
 ``` shell
     kubectl apply -f deploy.yaml
 ```
 
-## Validar as chamadas HTTP e HTTPS.
+## Validar chamadas HTTP e HTTPS
 ``` shell
 curl --cacert tls.crt https://example.com/foo/hostname
     foo-app
