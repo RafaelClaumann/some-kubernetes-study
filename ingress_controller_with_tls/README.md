@@ -1,14 +1,14 @@
 # Nginx Ingress Controller com TLS
 
 ## Configurar o arquivo _/etc/hosts_
-### Cluster kind com metallb e Service nginx do tipo LoadBalancer.
+#### Cluster kind com metallb e Service nginx do tipo LoadBalancer
 ``` shell
 # endereço IP do Service ingress controller do namespace ingress
 export ingress_addr=kubectl get svc -n ingress -o=jsonpath='{.items[0].status.loadBalancer.ingress[0].ip}'
 echo "$ingress_addr example.com" | tr -d '"' | sudo tee -a /etc/hosts
 ```
 
-### Cluster kind sem metallb e Service nginx do tipo NodePort.
+#### Cluster kind sem metallb e Service nginx do tipo NodePort
 ``` shell
 # endereço IP do container control-plane
 export ip_address=$(\
