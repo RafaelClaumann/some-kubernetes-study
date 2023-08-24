@@ -2,8 +2,8 @@
 - Cluster kind com metallb e Service nginx do tipo LoadBalancer.
 ``` shell
 # endereço IP do Service ingress controller do namespace ingress
-export ingress_controllers_address=kubectl get svc -n ingress -o=jsonpath='{.items[0].status.loadBalancer.ingress[0].ip}'
-echo "$ingress_controllers_address example.com" | tr -d '"' | sudo tee -a /etc/hosts
+export ingress_addr=\kubectl get svc -n ingress -o=jsonpath='{.items[0].status.loadBalancer.ingress[0].ip}'
+echo "$ingress_addr example.com" | tr -d '"' | sudo tee -a /etc/hosts
 ```
 
 - Cluster kind sem metallb e Service nginx do tipo NodePort.
@@ -80,5 +80,10 @@ curl --cacert tls.crt https://example.test.com/bar/hostname
 
 ----
 
-Create a multiple domains (SAN) self-signed SSL certificate
-https://transang.me/create-a-multiple-domains-self-signed-ssl-certificate-with-testing-scripts/
+- Nginx Ingress Controller Kind - [link](https://kind.sigs.k8s.io/docs/user/ingress/)
+- Metallb Kind - [link](https://kind.sigs.k8s.io/docs/user/loadbalancer/)
+- Kubernetes in Action - Capitulo 5 Services - [link](https://rafaelclaumann.notion.site/Chapter-5-Services-enabling-clients-to-discover-and-talk-to-pods-68a9fb7cfd9143b6bd93afc8dc0adeda)
+- Rewrite Target Nginx - [link](https://kubernetes.github.io/ingress-nginx/examples/rewrite/)
+- Create a Kubernetes TLS Ingress from scratch in Minikube - [link](https://www.youtube.com/watch?v=7K0gAYmWWho&ab_channel=kubucation)
+- How To Configure Ingress TLS/SSL Certificates in Kubernetes - [link](https://devopscube.com/configure-ingress-tls-kubernetes/)
+- Create a multiple domains (SAN) self-signed SSL certificate - [link](https://transang.me/create-a-multiple-domains-self-signed-ssl-certificate-with-testing-scripts/)
