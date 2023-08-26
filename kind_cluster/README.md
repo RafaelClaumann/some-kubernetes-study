@@ -1,7 +1,8 @@
 # Script kind cluster
 
 ### Objetivos
-- automatizar a criação de um cluster kubernetes usando kind e oferencendo a possibilidade de instalar addons adicionais
+- automatizar a criação de um cluster kubernetes usando kind
+- facilitar a instalação de addons no cluster
 
 ### Pre requisitos
 - [kind](https://kind.sigs.k8s.io/)
@@ -21,16 +22,22 @@
 
 ### Criando o cluster
 ``` bash
-# download do arquivo para criação do cluster
+# download do arquivo para criar o cluster
 $ curl -LO https://raw.githubusercontent.com/RafaelClaumann/some-kubernetes-study/main/kind_cluster.sh
 
-# criar cluster sem addons usando Kindnet CNI(default) e outras opções
+# criar cluster sem addons, apenas Kindnet CNI(default)
 $ sh kind_cluster.sh -k [ options ]
 
-# criar o cluster com Cilium CNI
+# criar cluster com Cilium CNI
 $ sh kind_cluster.sh -k -c [ options ]
 
-# instalar Metrics Server, Metallb, Nginx Ingress Controller e Prometheus Stack em um cluster existente 
+# criar cluster(Cilium CNI) e instalar Metrics Server, Metallb, Nginx Ingress Controller e Prometheus Stack
+$ sh kind_cluster.sh -k -c -m -l -i -p
+
+# criar cluster(Kindnet CNI) e instalar Metrics Server, Metallb, Nginx Ingress Controller e Prometheus Stack
+$ sh kind_cluster.sh -k -m -l -i -p
+
+# instalar Metrics Server, Metallb, Nginx Ingress Controller e Prometheus Stack em um cluster existente
 $ sh kind_cluster.sh -m -l -i -p
 ```
 
@@ -59,7 +66,7 @@ $ curl 172.18.0.2:30000
 $ curl localhost/grafana
   <a href="/grafana/login">Found</a>
 
-# validando do nginx
+# validando nginx ingress controller
 # https://kind.sigs.k8s.io/docs/user/ingress/#using-ingress
 $ kubectl apply -f https://kind.sigs.k8s.io/examples/ingress/usage.yaml
 
