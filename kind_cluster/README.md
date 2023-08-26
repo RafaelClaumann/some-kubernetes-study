@@ -25,20 +25,14 @@
 # download do arquivo para criar o cluster
 $ curl -LO https://raw.githubusercontent.com/RafaelClaumann/some-kubernetes-study/main/kind_cluster.sh
 
+# instalar addons em cluster existente
+$ sh kind_cluster.sh [ options ]
+
 # criar cluster sem addons, apenas Kindnet CNI(default)
 $ sh kind_cluster.sh -k [ options ]
 
 # criar cluster com Cilium CNI
 $ sh kind_cluster.sh -k -c [ options ]
-
-# criar cluster(Cilium CNI) e instalar Metrics Server, Metallb, Nginx Ingress Controller e Prometheus Stack
-$ sh kind_cluster.sh -k -c -m -l -i -p
-
-# criar cluster(Kindnet CNI) e instalar Metrics Server, Metallb, Nginx Ingress Controller e Prometheus Stack
-$ sh kind_cluster.sh -k -m -l -i -p
-
-# instalar Metrics Server, Metallb, Nginx Ingress Controller e Prometheus Stack em um cluster existente
-$ sh kind_cluster.sh -m -l -i -p
 ```
 
 ### Resultado esperado
