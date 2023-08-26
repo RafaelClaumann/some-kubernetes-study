@@ -10,7 +10,7 @@
 - [helm](https://helm.sh/)
 - linux
 
-### Opções de criação
+### Parâmetros do script
 | opção 	                     | resultado                                                                                                                        | 
 |------------------------------|----------------------------------------------------------------------------------------------------------------------------------|
 | -k                           | cluster criado com Kindnet CNI(default)        |
@@ -20,7 +20,7 @@
 | -i                           | instalar [Nginx Ingress Controller](https://github.com/kubernetes/ingress-nginx)  |
 | -p                           | instalar [Kube Prometheus Stack](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack)  |
 
-### Criando o cluster
+### Usando o script
 ``` bash
 # download do arquivo para criar o cluster
 $ curl -LO https://raw.githubusercontent.com/RafaelClaumann/some-kubernetes-study/main/kind_cluster.sh
