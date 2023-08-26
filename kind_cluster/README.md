@@ -1,5 +1,7 @@
 # Script kind cluster
-O script `cluster.sh` cria um cluster Kubernetes composto por um _control-plane_ e dois _worker nodes_ com addons opcionais usando kind.
+
+### Objetivos
+- automatizar a criação de um cluster kubernetes usando kind e oferencendo a possibilidade de instalar addons adicionais
 
 ### Pre requisitos
 - [kind](https://kind.sigs.k8s.io/)
@@ -10,50 +12,44 @@ O script `cluster.sh` cria um cluster Kubernetes composto por um _control-plane_
 ### Opções de criação
 | opção 	                     | resultado                                                                                                                        | 
 |------------------------------|----------------------------------------------------------------------------------------------------------------------------------|
-| no-options                   | sem addons                                                                                                               |
-| -c  ou --cni | [cilium CNI](https://github.com/cilium/cilium) (deve ser o primeiro parâmetro) |
-| -m  ou --metrics              | [metrics-server](https://github.com/kubernetes-sigs/metrics-server)  |
-| -i  ou --ingress              | [nginx-ingress-controller](https://github.com/kubernetes/ingress-nginx)  |
-| -p  ou --prometheus           | [kube-prometheus-stack](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack) e grafana via NodePort `http://<node-ip>:30000` |
-| -pi ou --prometheus-ingress   | nginx-ingress-controller, kube-prometheus-stack, service-monitor-nginx e grafana via ingress `http://localhost/grafana` |
+| -k                           | cluster criado com Kindnet CNI(default)        |
+| -k -c                        | cluster criado com [Cilium CNI](https://github.com/cilium/cilium) |
+| -m                           | instalar [Metrics Server](https://github.com/kubernetes-sigs/metrics-server)  |
+| -l                           | instalar [Metallb](https://github.com/metallb/metallb)  |
+| -i                           | instalar [Nginx Ingress Controller](https://github.com/kubernetes/ingress-nginx)  |
+| -p                           | instalar [Kube Prometheus Stack](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack)  |
 
 ### Criando o cluster
 ``` bash
 # download do arquivo para criação do cluster
 $ curl -LO https://raw.githubusercontent.com/RafaelClaumann/some-kubernetes-study/main/kind_cluster.sh
 
-# cluster sem addons
-$ sh kind_cluster.sh
+# criar cluster sem addons usando Kindnet CNI(default) e outras opções
+$ sh kind_cluster.sh -k [ options ]
 
-# nginx-ingress-controller, service-monitor-nginx, kube-prometheus-stack
-# grafana em http://localhost/grafana ou http://<node-ip>:30000
-$ sh kind_cluster.sh -pi
+# criar o cluster com Cilium CNI
+$ sh kind_cluster.sh -k -c [ options ]
 
-# cilium CNI, metrics-server, nginx-ingress-controller e kube-prometheus-stack
-# grafana em http://localhost/grafana ou http://<node-ip>:30000
-$ sh kind_cluster.sh -c -m -i -p
-
-# cilium CNI, metrics-server, nginx-ingress-controller, service-monitor-nginx e kube-prometheus-stack
-# grafana em http://localhost/grafana ou http://<node-ip>:30000
-$ sh kind_cluster.sh -c -m -pi 
+# instalar Metrics Server, Metallb, Nginx Ingress Controller e Prometheus Stack em um cluster existente 
+$ sh kind_cluster.sh -m -l -i -p
 ```
 
 ### Resultado esperado
 ``` bash
-# nodes ready
+# kubernetes ready nodes
 $ kubectl get nodes -o wide     
   NAME                STATUS  ROLES          VERSION  INTERNAL-IP  EXTERNAL-IP  OS-IMAGE        CONTAINER-RUNTIME
   kind-control-plane  Ready   control-plane  v1.25.3  172.18.0.4   <none>       Ubuntu 22.04.1  containerd://1.6.9
   kind-worker         Ready   <none>         v1.25.3  172.18.0.2   <none>       Ubuntu 22.04.1  containerd://1.6.9
   kind-worker2        Ready   <none>         v1.25.3  172.18.0.3   <none>       Ubuntu 22.04.1  containerd://1.6.9
 
-# hHelm charts instalados
+# helm charts instalados
 $ helm list --all-namespaces  
-  NAME            NAMESPACE       REVISION  STATUS      CHART                          APP VERSION
-  cilium          cilium          1         deployed    cilium-1.13.0                  1.13.0     
-  nginx           ingress         1         deployed    ingress-nginx-4.5.2            1.6.4      
-  metrics         metrics-server  1         deployed    metrics-server-3.8.4           0.6.2      
-  prometheus      monitoring      1         deployed    kube-prometheus-stack-45.7.1   v0.63.0
+  NAME            NAMESPACE       REVISION  UPDATED                         STATUS
+  metal-lb        metallb-system  1         metallb-0.13.10                 v0.13.10
+  metrics         metrics-server  1         metrics-server-3.8.4            0.6.2
+  nginx           ingress         3         ingress-nginx-4.7.1             1.8.1
+  prometheus      monitoring      3         kube-prometheus-stack-48.4.0    v0.66.0
 
 # grafana acessivel via Service NodePort
 $ curl 172.18.0.2:30000
@@ -63,7 +59,7 @@ $ curl 172.18.0.2:30000
 $ curl localhost/grafana
   <a href="/grafana/login">Found</a>
 
-# validação do nginx
+# validando do nginx
 # https://kind.sigs.k8s.io/docs/user/ingress/#using-ingress
 $ kubectl apply -f https://kind.sigs.k8s.io/examples/ingress/usage.yaml
 

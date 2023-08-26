@@ -96,47 +96,6 @@ function install_cilium_cni() {
     --timeout=-1s  # -1 = wait 1 week
 }
 
-function install_metallb() {
-  echo "Instalando e configurando { Metal LB }"
-  helm upgrade \
-    --install \
-    --version $METAL_LB_HELM_CHART_VERSION \
-    --namespace $METAL_LB_NAMESPACE_NAME \
-    --create-namespace \
-    --repo $METAL_LB_HELM_REPOSITORY_URL $METAL_LB_HELM_RELEASE_NAME metallb
-
-  echo "Esperando instalação do { Metal LB }"
-  kubectl wait \
-    --namespace=metallb-system \
-    --for=condition=Ready pod \
-    --selector=app.kubernetes.io/instance=metal-lb \
-    --timeout=-1s
-
-  subnet=$(docker network inspect -f '{{(index .IPAM.Config 0).Subnet}}' kind)
-  endereco=$(echo "$subnet" | sed 's|/[0-9]\{1,3\}$||')
-  lb_address_range="${endereco%.*}.202-${endereco%.*}.254"
-
-  while IFS= read -r line; do
-    if [[ "$line" =~ ^\ +\-.* ]]; then
-      echo "  - $lb_address_range"
-    else
-      echo "$line"
-    fi
-  done < ./config/metallb.yaml > ./config/temp.yaml
-  mv ./config/temp.yaml ./config/metallb.yaml
-
-  kubectl apply -f ./config/metallb.yaml
-
-  ingress_service_type=$(helm get values -n $INGRESS_NGINX_NAMESPACE_NAME $INGRESS_NGINX_HELM_RELEASE_NAME -o yaml | grep -e "type: NodePort" | tr -d ' ')
-  has_prometheus_deployed=$(helm list -n $PROMETHEUS_STACK_NAMESPACE_NAME --short)
-  if [[ $ingress_service_type = "type:NodePort" && $has_prometheus_deployed = "$PROMETHEUS_STACK_HELM_RELEASE_NAME" ]]; then
-    install_ingress_nginx
-    enable_nginx_service_monitor
-  elif [[ $ingress_service_type = "type:NodePort" ]]; then
-    install_ingress_nginx
-  fi
-}
-
 function install_metrics_server() {
   echo "Instalando e configurando { Metrics Server }"
   helm upgrade \
@@ -157,10 +116,58 @@ function install_metrics_server() {
   kubectl get pods --namespace $METRICS_SERVER_NAMESPACE_NAME
 }
 
+function install_metallb() {
+  echo "Instalando e configurando { Metal LB }"
+  helm upgrade \
+    --install \
+    --version $METAL_LB_HELM_CHART_VERSION \
+    --namespace $METAL_LB_NAMESPACE_NAME \
+    --create-namespace \
+    --repo $METAL_LB_HELM_REPOSITORY_URL $METAL_LB_HELM_RELEASE_NAME metallb
+
+  echo "Esperando instalação do { Metal LB }"
+  kubectl wait \
+    --namespace=metallb-system \
+    --for=condition=Ready pod \
+    --selector=app.kubernetes.io/instance=metal-lb \
+    --timeout=-1s
+
+  # obtendo subnet CIDR do cluster kind
+  subnet=$(docker network inspect -f '{{(index .IPAM.Config 0).Subnet}}' kind)
+  endereco=$(echo "$subnet" | sed 's|/[0-9]\{1,3\}$||')
+  lb_address_range="${endereco%.*}.202-${endereco%.*}.254"
+
+  # definindo a faixa de endereços IP disponíveis para o metallb
+  while IFS= read -r line; do
+    if [[ "$line" =~ ^\ +\-.* ]]; then
+      echo "  - $lb_address_range"
+    else
+      echo "$line"
+    fi
+  done < ./config/metallb.yaml > ./config/temp.yaml
+  mv ./config/temp.yaml ./config/metallb.yaml
+
+  # aplicando configurações do metallb
+  kubectl apply -f ./config/metallb.yaml
+
+  # se ingress ServiceType=NodePort e kube_prometheus instalado, atualize ingress ServiceType=LoadBalancer e habilite o nginx_service_monitor
+  # se ingress ServiceType=NodePort, atualize o ingress ServiceType=Load Balancer
+  ingress_service_type=$(helm get values -n $INGRESS_NGINX_NAMESPACE_NAME $INGRESS_NGINX_HELM_RELEASE_NAME -o yaml | grep -e "type: NodePort" | tr -d ' ')
+  has_prometheus_deployed=$(helm list -n $PROMETHEUS_STACK_NAMESPACE_NAME --short)
+  if [[ $ingress_service_type = "type:NodePort" && $has_prometheus_deployed = "$PROMETHEUS_STACK_HELM_RELEASE_NAME" ]]; then
+    install_ingress_nginx
+    enable_nginx_service_monitor
+  elif [[ $ingress_service_type = "type:NodePort" ]]; then
+    install_ingress_nginx
+  fi
+}
+
 function install_ingress_nginx() {
   echo "Instalando e configurando { Nginx Ingress Controller }"
   kubectl label node $CLUSTER_NAME-control-plane ingress-ready=true
 
+  # se o load balancer(metallb) estiver instalado, crie o ingress ServiceType=LoadBalancer
+  # caso contrário, instale o ingress ServiceType=NodePort
   has_load_balancer=$(helm list -n $METAL_LB_NAMESPACE_NAME -q)
   if [[ $has_load_balancer = "$METAL_LB_HELM_RELEASE_NAME" ]]; then
     echo "Usando Nginx com Service Type Load Balancer"
@@ -205,6 +212,7 @@ function install_prometheus_stack() {
 
   kubectl get pods --namespace $PROMETHEUS_STACK_NAMESPACE_NAME
 
+  # se o ingress estiver instalado, habilite o nginx_service_monitor
   has_ingress_deployed=$(helm list --namespace $INGRESS_NGINX_NAMESPACE_NAME -q)
   if [ "$has_ingress_deployed" = $INGRESS_NGINX_HELM_RELEASE_NAME ]; then
     enable_nginx_service_monitor
@@ -212,7 +220,6 @@ function install_prometheus_stack() {
 }
 
 function enable_nginx_service_monitor() {
-  # https://kubernetes.github.io/ingress-nginx/user-guide/monitoring/#prometheus-and-grafana-installation-using-service-monitors
   helm upgrade \
     --repo $INGRESS_NGINX_HELM_REPOSITORY_URL $INGRESS_NGINX_HELM_RELEASE_NAME ingress-nginx \
     --namespace $INGRESS_NGINX_NAMESPACE_NAME \
