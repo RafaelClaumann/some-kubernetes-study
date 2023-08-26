@@ -14,7 +14,7 @@
 | opção 	                     | resultado                                                                                                                        | 
 |------------------------------|----------------------------------------------------------------------------------------------------------------------------------|
 | -k                           | cluster criado com Kindnet CNI(default)        |
-| -k -c                        | cluster criado com [Cilium CNI](https://github.com/cilium/cilium) |
+| -c                        | cluster criado com [Cilium CNI](https://github.com/cilium/cilium) |
 | -m                           | instalar [Metrics Server](https://github.com/kubernetes-sigs/metrics-server)  |
 | -l                           | instalar [Metallb](https://github.com/metallb/metallb)  |
 | -i                           | instalar [Nginx Ingress Controller](https://github.com/kubernetes/ingress-nginx)  |
