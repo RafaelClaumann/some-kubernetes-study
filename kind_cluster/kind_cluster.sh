@@ -31,12 +31,10 @@ unique_paramaters=$(tr ' ' '\n' <<<"${parameters[@]}" | awk '!u[$0]++' | tr '\n'
 echo "Parametros fornecidos: $unique_paramaters"
 
 function main() {
-  if [[ ${unique_paramaters[@]} =~ "-k" ]]; then
-    if [[ ${unique_paramaters[@]} =~ "-c" ]]; then
-      create_cluster_with_cilium_cni
-    else
-      create_cluster_with_kindnet_cni
-    fi
+  if [[ ${unique_paramaters[@]} =~ "-k" && ${unique_paramaters[@]} =~ "-c" ]]; then
+    create_cluster_with_cilium_cni
+  else
+    create_cluster_with_kindnet_cni
   fi
 
   if [[ ${unique_paramaters[@]} =~ "-m" ]]; then
