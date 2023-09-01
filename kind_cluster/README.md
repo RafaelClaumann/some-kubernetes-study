@@ -26,15 +26,19 @@
 $ curl -LO https://raw.githubusercontent.com/RafaelClaumann/some-kubernetes-study/main/kind_cluster.sh
 
 # criar um cluster sem addons, apenas Kindnet CNI(default)
+# options [ -m -l -i -p ]
 $ sh kind_cluster.sh -k [ options ]
 
 # criar um cluster com Kindnet CNI(default) e nginx-ingress-controller
+# options [ -m -l -i -p ]
 $ sh kind_cluster.sh -k -i
 
 # criar um cluster sem addons, apenas Cilium CNI
+# options [ -m -l -i -p ]
 $ sh kind_cluster.sh -k -c [ options ]
 
 # criar um cluster com Cilium CNI e nginx-ingress-controller
+# options [ -m -l -i -p ]
 $ sh kind_cluster.sh -k -c -i
 
 # instalar addons em um cluster existente
