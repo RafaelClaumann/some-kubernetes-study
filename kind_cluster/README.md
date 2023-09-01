@@ -5,10 +5,13 @@
 - facilitar a instalação de addons no cluster
 
 ### Pre requisitos
-- [kind](https://kind.sigs.k8s.io/)
-- [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/)
-- [helm](https://helm.sh/)
+- kind
+- kubectl
+- helm
 - linux
+
+### Limitação
+- A estutura de diretórios(config & cluster_manifests) e seus arquivos deve ser mantida para que o script kind_cluster.sh seja executado com sucesso
 
 ### Parâmetros do script
 | opção 	                     | resultado                                                                                                                        | 
@@ -22,9 +25,6 @@
 
 ### Usando o script
 ``` bash
-# download do arquivo para criar o cluster
-$ curl -LO https://raw.githubusercontent.com/RafaelClaumann/some-kubernetes-study/main/kind_cluster.sh
-
 # criar um cluster sem addons, apenas Kindnet CNI(default)
 # options [ -m -l -i -p ]
 $ sh kind_cluster.sh -k [ options ]
