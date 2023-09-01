@@ -1,4 +1,8 @@
 #!/bin/bash
+
+# script para instalação do prometheus + grafana usando manifests
+# essa é uma contrária ao uso de helm charts.
+
 # https://github.com/prometheus-operator/kube-prometheus
 readonly INSTALL_DIR=kube-prometheus-instalation
 readonly RELEASE_VERSION=0.9
