@@ -13,7 +13,7 @@
 ### Parâmetros do script
 | opção 	                     | resultado                                                                                                                        | 
 |------------------------------|----------------------------------------------------------------------------------------------------------------------------------|
-| -k                           | criar cluster       |
+| -k                           | criar cluster com Kindnet CNI(default)      |
 | -k -c                           | criar cluster com [Cilium CNI](https://github.com/cilium/cilium) |
 | -m                           | instalar [Metrics Server](https://github.com/kubernetes-sigs/metrics-server)  |
 | -l                           | instalar [Metallb](https://github.com/metallb/metallb)  |
