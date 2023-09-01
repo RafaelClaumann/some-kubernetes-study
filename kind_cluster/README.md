@@ -28,7 +28,7 @@ $ curl -LO https://raw.githubusercontent.com/RafaelClaumann/some-kubernetes-stud
 # criar um cluster sem addons, apenas Kindnet CNI(default)
 $ sh kind_cluster.sh -k [ options ]
 
-# criar um cluster com Cilium CNI
+# criar um cluster sem addons, apenas Cilium CNI
 $ sh kind_cluster.sh -k -c [ options ]
 
 # instalar addons em um cluster existente
